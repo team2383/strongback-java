@@ -71,6 +71,9 @@
                  author="false"
                  version="true"
                  use="true"
+                 encoding="utf-8"
+                 charset="utf-8"
+                 docencoding="utf-8"
                  windowtitle="Strongback Java Library">
 
             <classpath>
@@ -88,7 +91,7 @@
 
             <doctitle><![CDATA[<h1>Strongback Java Library</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright &#169; ${current.year} Strongback and individual contributors. All Rights Reserved.</i>]]></bottom>
-            <tag name="todo" scope="all" description="To do:"/>
+            <!--<tag name="todo" scope="all" description="To do:"/> broken? -->
             <group title="Strongback" packages="org.strongback"/>
             <group title="Components" packages="org.strongback.components*:org.strongback.hardware*"/>
             <group title="Drives" packages="org.strongback.drive"/>
@@ -132,6 +135,8 @@
         <zip destfile="${build.dir}/strongback-${strongback.version}.zip">
             <tarfileset src="${build.dir}/strongback-${strongback.version}.tar"/>
         </zip>
+
+        <unzip src="${build.dir}/strongback-${strongback.version}.zip" dest="${build.dir}/strongback-latest/"></unzip>
 
         <gzip destfile="${build.dir}/strongback-${strongback.version}.tar.gz" src="${build.dir}/strongback-${strongback.version}.tar"/>
         <delete file="${build.dir}/strongback-${strongback.version}.tar" />
