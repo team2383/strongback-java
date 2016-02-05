@@ -287,8 +287,8 @@ public class Hardware {
          */
         public static TwoAxisAccelerometer analogAccelerometer(int xAxisChannel, int yAxisChannel, double sensitivity,
                 double zeroValueInVolts) {
-            if (xAxisChannel == yAxisChannel) throw new IllegalArgumentException(
-                    "The x- and y-axis channels may not be the same");
+            if (xAxisChannel == yAxisChannel)
+                throw new IllegalArgumentException("The x- and y-axis channels may not be the same");
             Accelerometer xAxis = analogAccelerometer(xAxisChannel, sensitivity, zeroValueInVolts);
             Accelerometer yAxis = analogAccelerometer(yAxisChannel, sensitivity, zeroValueInVolts);
             return TwoAxisAccelerometer.create(xAxis::getAcceleration, yAxis::getAcceleration);
@@ -334,12 +334,14 @@ public class Hardware {
              * use of this filter is to reject data points which errantly (due to averaging or sampling) appear within the
              * window when detecting transitions using the Rising Edge and Falling Edge functionality of the analog trigger
              */
-            FILTERED, /**
-                       * The analog output is averaged and over sampled.
-                       */
-            AVERAGED, /**
-                       * No filtering or averaging is to be used.
-                       */
+            FILTERED,
+            /**
+             * The analog output is averaged and over sampled.
+             */
+            AVERAGED,
+            /**
+             * No filtering or averaging is to be used.
+             */
             NONE;
         }
 
@@ -353,10 +355,11 @@ public class Hardware {
              * The switch is triggered only when the analog value is inside the range, and not triggered if it is outside (above
              * or below)
              */
-            IN_WINDOW, /**
-                        * The switch is triggered only when the value is above the upper limit, and not triggered if it is below
-                        * the lower limit and maintains the previous state if in between (hysteresis)
-                        */
+            IN_WINDOW,
+            /**
+             * The switch is triggered only when the value is above the upper limit, and not triggered if it is below the lower
+             * limit and maintains the previous state if in between (hysteresis)
+             */
             AVERAGED;
         }
 
@@ -727,6 +730,31 @@ public class Hardware {
         }
 
         /**
+         * Create a single-acting solenoid that uses the specified channels on the default module.
+         *
+         * @param channel the channel that actuates the solenoid
+         * @param initialDirection the initial direction for the solenoid; may not be null
+         * @return a solenoid on the specified channels; never null
+         */
+        public static Solenoid singleSolenoid(int channel, Solenoid.Direction initialDirection) {
+            edu.wpi.first.wpilibj.Solenoid solenoid = new edu.wpi.first.wpilibj.Solenoid(channel);
+            return new HardwareSingleSolenoid(solenoid, initialDirection);
+        }
+
+        /**
+         * Create a single-acting solenoid that uses the specified channels on the given module.
+         *
+         * @param module the module for the channels
+         * @param channel the channel that actuates the solenoid
+         * @param initialDirection the initial direction for the solenoid; may not be null
+         * @return a solenoid on the specified channels; never null
+         */
+        public static Solenoid singleSolenoid(int module, int channel, Solenoid.Direction initialDirection) {
+            edu.wpi.first.wpilibj.Solenoid solenoid = new edu.wpi.first.wpilibj.Solenoid(module, channel);
+            return new HardwareSingleSolenoid(solenoid, initialDirection);
+        }
+
+        /**
          * Create a relay on the specified channel.
          *
          * @param channel the channel the relay is connected to
@@ -759,15 +787,12 @@ public class Hardware {
          */
         public static FlightStick logitechAttack3D(int port) {
             Joystick joystick = new Joystick(port);
-            return FlightStick.create(joystick::getRawAxis,
-                                      joystick::getRawButton,
-                                      joystick::getPOV,
-                                      joystick::getY, // pitch
-                                      () -> joystick.getTwist() * -1, // yaw is reversed
-                                      joystick::getX, // roll
-                                      joystick::getThrottle, // throttle
-                                      () -> joystick.getRawButton(1), // trigger
-                                      () -> joystick.getRawButton(2)); // thumb
+            return FlightStick.create(joystick::getRawAxis, joystick::getRawButton, joystick::getPOV, joystick::getY, // pitch
+                    () -> joystick.getTwist() * -1, // yaw is reversed
+                    joystick::getX, // roll
+                    () -> joystick.getRawAxis(2), // throttle
+                    () -> joystick.getRawButton(1), // trigger
+                    () -> joystick.getRawButton(2)); // thumb
         }
 
         /**
@@ -778,15 +803,13 @@ public class Hardware {
          */
         public static FlightStick microsoftSideWinder(int port) {
             Joystick joystick = new Joystick(port);
-            return FlightStick.create(joystick::getRawAxis,
-                                      joystick::getRawButton,
-                                      joystick::getPOV,
-                                      () -> joystick.getY() * -1, // pitch is reversed
-                                      joystick::getTwist, // yaw
-                                      joystick::getX, // roll
-                                      joystick::getThrottle, // throttle
-                                      () -> joystick.getRawButton(0), // trigger
-                                      () -> joystick.getRawButton(1)); // thumb
+            return FlightStick.create(joystick::getRawAxis, joystick::getRawButton, joystick::getPOV,
+                    () -> joystick.getY() * -1, // pitch is reversed
+                    joystick::getTwist, // yaw
+                    joystick::getX, // roll
+                    joystick::getThrottle, // throttle
+                    () -> joystick.getRawButton(0), // trigger
+                    () -> joystick.getRawButton(1)); // thumb
         }
 
         /**
@@ -797,25 +820,13 @@ public class Hardware {
          */
         public static Gamepad logitechDualAction(int port) {
             Joystick joystick = new Joystick(port);
-            return Gamepad.create(joystick::getRawAxis,
-                                  joystick::getRawButton,
-                                  joystick::getPOV,
-                                  () -> joystick.getRawAxis(0),
-                                  () -> joystick.getRawAxis(1) * -1,
-                                  () -> joystick.getRawAxis(2),
-                                  () -> joystick.getRawAxis(3) * -1,
-                                  () -> joystick.getRawButton(6) ? 1.0 : 0.0,
-                                  () -> joystick.getRawButton(7) ? 1.0 : 0.0,
-                                  () -> joystick.getRawButton(4),
-                                  () -> joystick.getRawButton(5),
-                                  () -> joystick.getRawButton(1),
-                                  () -> joystick.getRawButton(2),
-                                  () -> joystick.getRawButton(0),
-                                  () -> joystick.getRawButton(3),
-                                  () -> joystick.getRawButton(9),
-                                  () -> joystick.getRawButton(8),
-                                  () -> joystick.getRawButton(10),
-                                  () -> joystick.getRawButton(11));
+            return Gamepad.create(joystick::getRawAxis, joystick::getRawButton, joystick::getPOV, () -> joystick.getRawAxis(0),
+                    () -> joystick.getRawAxis(1) * -1, () -> joystick.getRawAxis(2), () -> joystick.getRawAxis(3) * -1,
+                    () -> joystick.getRawButton(6) ? 1.0 : 0.0, () -> joystick.getRawButton(7) ? 1.0 : 0.0,
+                    () -> joystick.getRawButton(4), () -> joystick.getRawButton(5), () -> joystick.getRawButton(1),
+                    () -> joystick.getRawButton(2), () -> joystick.getRawButton(0), () -> joystick.getRawButton(3),
+                    () -> joystick.getRawButton(9), () -> joystick.getRawButton(8), () -> joystick.getRawButton(10),
+                    () -> joystick.getRawButton(11));
         }
 
         /**
@@ -826,25 +837,12 @@ public class Hardware {
          */
         public static Gamepad logitechF310(int port) {
             Joystick joystick = new Joystick(port);
-            return Gamepad.create(joystick::getRawAxis,
-                                  joystick::getRawButton,
-                                  joystick::getPOV,
-                                  () -> joystick.getRawAxis(0),
-                                  () -> joystick.getRawAxis(1) * -1,
-                                  () -> joystick.getRawAxis(4),
-                                  () -> joystick.getRawAxis(5) * -1,
-                                  () -> joystick.getRawAxis(2),
-                                  () -> joystick.getRawAxis(3),
-                                  () -> joystick.getRawButton(4),
-                                  () -> joystick.getRawButton(5),
-                                  () -> joystick.getRawButton(0),
-                                  () -> joystick.getRawButton(1),
-                                  () -> joystick.getRawButton(2),
-                                  () -> joystick.getRawButton(3),
-                                  () -> joystick.getRawButton(7),
-                                  () -> joystick.getRawButton(6),
-                                  () -> joystick.getRawButton(8),
-                                  () -> joystick.getRawButton(9));
+            return Gamepad.create(joystick::getRawAxis, joystick::getRawButton, joystick::getPOV, () -> joystick.getRawAxis(0),
+                    () -> joystick.getRawAxis(1) * -1, () -> joystick.getRawAxis(4), () -> joystick.getRawAxis(5) * -1,
+                    () -> joystick.getRawAxis(2), () -> joystick.getRawAxis(3), () -> joystick.getRawButton(5),
+                    () -> joystick.getRawButton(6), () -> joystick.getRawButton(1), () -> joystick.getRawButton(2),
+                    () -> joystick.getRawButton(3), () -> joystick.getRawButton(4), () -> joystick.getRawButton(8),
+                    () -> joystick.getRawButton(7), () -> joystick.getRawButton(9), () -> joystick.getRawButton(10));
         }
     }
 }

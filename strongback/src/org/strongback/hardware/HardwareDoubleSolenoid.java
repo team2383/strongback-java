@@ -16,6 +16,8 @@
 
 package org.strongback.hardware;
 
+import java.util.EnumMap;
+
 import org.strongback.components.Solenoid;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -32,20 +34,30 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 final class HardwareDoubleSolenoid implements Solenoid {
     private final DoubleSolenoid solenoid;
 
+    private static final EnumMap<Solenoid.Direction, DoubleSolenoid.Value> DIRECTION_MAP = new EnumMap<Solenoid.Direction, DoubleSolenoid.Value>(
+            Solenoid.Direction.class);
+
+    static {
+        DIRECTION_MAP.put(Direction.EXTENDING, Value.kForward);
+        DIRECTION_MAP.put(Direction.RETRACTING, Value.kReverse);
+        DIRECTION_MAP.put(Direction.STOPPED, Value.kOff);
+    }
+
     private Direction direction;
 
-    HardwareDoubleSolenoid(DoubleSolenoid solenoid, Direction initialDirection ) {
+    HardwareDoubleSolenoid(DoubleSolenoid solenoid, Direction initialDirection) {
         assert solenoid != null;
         assert initialDirection != null;
         this.solenoid = solenoid;
         this.direction = initialDirection;
+        solenoid.set(DIRECTION_MAP.get(initialDirection));
         checkState();
     }
 
     protected void checkState() {
-        if ( solenoid.get() == Value.kForward ) {
+        if (solenoid.get() == Value.kForward) {
             direction = Direction.EXTENDING;
-        } else if ( solenoid.get() == Value.kReverse ) {
+        } else if (solenoid.get() == Value.kReverse) {
             direction = Direction.RETRACTING;
         } else {
             direction = Direction.STOPPED;

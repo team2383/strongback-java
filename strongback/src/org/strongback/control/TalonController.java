@@ -47,7 +47,7 @@ import org.strongback.components.TalonSRX;
  * </pre>
  *
  * <p>
- * In order for limit switches and closed-loop features to function correctly, the sensor and motor have to be “in-phase”. This
+ * In order for limit switches and closed-loop features to function correctly, the sensor and motor have to be "in-phase". This
  * means that the sensor position must move in a <i>positive</i> direction as the motor controller drives <i>positive</i>
  * throttle. To test this, first drive the motor manually (using a human input device), and watch the sensor position either in
  * the roboRIO Web-based Configuration Self-Test, or by calling {@link #getSelectedSensor()} and printing it to console. If the
@@ -126,27 +126,29 @@ public interface TalonController extends PIDController, TalonSRX {
         /**
          * Control the motor by directly setting the desired position (in ticks or an analog value) for the motor's encoder.
          */
-        POSITION(1), /**
-                      * Control the motor's speed in position change every 10 milliseconds.
-                      */
-        SPEED(2), /**
-                   * Control the motor by directly setting the current to be sent to the motor.
-                   */
-        CURRENT(3), /**
-                     * Control the motor by directly setting the voltage to be sent to the motor.
-                     */
-        VOLTAGE(4), /**
-                     * Control the motor by following another Talon SRX device.
-                     */
+        POSITION(1),
+        /**
+         * Control the motor's speed in position change every 10 milliseconds.
+         */
+        SPEED(2),
+        /**
+         * Control the motor by directly setting the current to be sent to the motor.
+         */
+        CURRENT(3),
+        /**
+         * Control the motor by directly setting the voltage to be sent to the motor.
+         */
+        VOLTAGE(4),
+        /**
+         * Control the motor by following another Talon SRX device.
+         */
         FOLLOWER(5);
 
         private final int value;
 
         public static ControlMode valueOf(int value) {
             for (ControlMode mode : values()) {
-                if (mode.value == value) {
-                    return mode;
-                }
+                if (mode.value == value) return mode;
             }
             return null;
         }
@@ -180,6 +182,7 @@ public interface TalonController extends PIDController, TalonSRX {
 
     /**
      * Get the current target angle for this controller as defined by the selected input sensor in degrees.
+     * 
      * @return the target angle in degrees as defined by the selected input sensor
      * @see #withTarget(double)
      */
