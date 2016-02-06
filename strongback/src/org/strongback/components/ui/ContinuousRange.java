@@ -24,7 +24,7 @@ import org.strongback.components.Switch;
 import org.strongback.function.DoubleToDoubleFunction;
 
 /**
- * Defines a range of values between [-1.0, 1.0] inclusive.
+ * Defines a range of values. Default range is [-1.0, 1.0] inclusive.
  *
  * @author Zach Anderson
  */
@@ -33,7 +33,7 @@ public interface ContinuousRange {
     /**
      * Read the current value.
      *
-     * @return the value in the range [-1.0, 1.0] inclusive.
+     * @return the value in the range.
      */
     public double read();
 
@@ -74,6 +74,18 @@ public interface ContinuousRange {
      */
     default public ContinuousRange map(DoubleToDoubleFunction mapFunction) {
         return () -> mapFunction.applyAsDouble(this.read());
+    }
+
+    /**
+     * Create a new range that maps the values of this instance to another range
+     *
+     * @param min new minimum
+     * @param max new maximum
+     * @return the new mapped range; never null
+     */
+    default public ContinuousRange mapToRange(double min, double max) {
+        double range = max - min;
+        return () -> (this.read() + 1) * range / 2 + min;
     }
 
     /**
