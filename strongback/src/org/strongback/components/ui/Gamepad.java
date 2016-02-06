@@ -26,6 +26,8 @@ import org.strongback.function.IntToIntFunction;
  * A type of input device similar to an Xbox controller.
  */
 public interface Gamepad extends InputDevice {
+    double TRIGGER_THRESHOLD = 0.60;
+
     public abstract ContinuousRange getLeftX();
 
     public abstract ContinuousRange getLeftY();
@@ -37,6 +39,10 @@ public interface Gamepad extends InputDevice {
     public abstract ContinuousRange getLeftTrigger();
 
     public abstract ContinuousRange getRightTrigger();
+
+    public abstract Switch getLeftTriggerAsSwitch();
+
+    public abstract Switch getRightTriggerAsSwitch();
 
     public abstract Switch getLeftBumper();
 
@@ -76,7 +82,7 @@ public interface Gamepad extends InputDevice {
 
             @Override
             public DirectionalAxis getDPad(int pad) {
-                return ()->dPad.applyAsInt(pad);
+                return () -> dPad.applyAsInt(pad);
             }
 
             @Override
@@ -107,6 +113,16 @@ public interface Gamepad extends InputDevice {
             @Override
             public ContinuousRange getRightTrigger() {
                 return rightTrigger;
+            }
+
+            @Override
+            public Switch getLeftTriggerAsSwitch() {
+                return leftTrigger.toSwitch((value) -> value >= TRIGGER_THRESHOLD);
+            }
+
+            @Override
+            public Switch getRightTriggerAsSwitch() {
+                return rightTrigger.toSwitch((value) -> value >= TRIGGER_THRESHOLD);
             }
 
             @Override

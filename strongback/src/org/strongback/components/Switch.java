@@ -18,7 +18,6 @@ package org.strongback.components;
 
 import org.strongback.annotation.ThreadSafe;
 
-
 /**
  * A switch is any readable device that has an active state when it is triggered and an inactive state when it isn't.
  *
@@ -36,17 +35,19 @@ public interface Switch {
 
     /**
      * Create a switch that is always triggered.
+     * 
      * @return the always-triggered switch; never null
      */
     public static Switch alwaysTriggered() {
-        return ()->true;
+        return () -> true;
     }
 
     /**
      * Create a switch that is never triggered.
+     * 
      * @return the never-triggered switch; never null
      */
     public static Switch neverTriggered() {
-        return ()->false;
+        return () -> false;
     }
 }

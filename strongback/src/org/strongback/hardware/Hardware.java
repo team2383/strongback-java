@@ -780,17 +780,41 @@ public class Hardware {
         }
 
         /**
-         * Create a Logitech Attack 3D flight stick controlled by the Driver Station.
+         * Create a Logitech Attack 3 flight stick controlled by the Driver Station.
          *
          * @param port the port on the driver station that the flight stick is plugged into
          * @return the input device; never null
          */
-        public static FlightStick logitechAttack3D(int port) {
+        public static FlightStick logitechAttack3(int port) {
             Joystick joystick = new Joystick(port);
-            return FlightStick.create(joystick::getRawAxis, joystick::getRawButton, joystick::getPOV, joystick::getY, // pitch
-                    () -> joystick.getTwist() * -1, // yaw is reversed
+            return FlightStick.create(
+                    joystick::getRawAxis,
+                    joystick::getRawButton,
+                    joystick::getPOV,
+                    joystick::getY, // pitch
+                    () -> 0, // no yaw for ATK3
                     joystick::getX, // roll
                     () -> joystick.getRawAxis(2), // throttle
+                    () -> joystick.getRawButton(1), // trigger
+                    () -> joystick.getRawButton(2)); // thumb
+        }
+
+        /**
+         * Create a Logitech Extreme 3D Pro flight stick controlled by the Driver Station.
+         *
+         * @param port the port on the driver station that the flight stick is plugged into
+         * @return the input device; never null
+         */
+        public static FlightStick logitechExtreme3DPro(int port) {
+            Joystick joystick = new Joystick(port);
+            return FlightStick.create(
+                    joystick::getRawAxis,
+                    joystick::getRawButton,
+                    joystick::getPOV,
+                    joystick::getY, // pitch
+                    () -> joystick.getTwist(), // twist is reversed for extreme 3D Pro
+                    joystick::getX, // roll
+                    () -> joystick.getThrottle(), // throttle
                     () -> joystick.getRawButton(1), // trigger
                     () -> joystick.getRawButton(2)); // thumb
         }
@@ -803,7 +827,10 @@ public class Hardware {
          */
         public static FlightStick microsoftSideWinder(int port) {
             Joystick joystick = new Joystick(port);
-            return FlightStick.create(joystick::getRawAxis, joystick::getRawButton, joystick::getPOV,
+            return FlightStick.create(
+                    joystick::getRawAxis,
+                    joystick::getRawButton,
+                    joystick::getPOV,
                     () -> joystick.getY() * -1, // pitch is reversed
                     joystick::getTwist, // yaw
                     joystick::getX, // roll
@@ -820,13 +847,25 @@ public class Hardware {
          */
         public static Gamepad logitechDualAction(int port) {
             Joystick joystick = new Joystick(port);
-            return Gamepad.create(joystick::getRawAxis, joystick::getRawButton, joystick::getPOV, () -> joystick.getRawAxis(0),
-                    () -> joystick.getRawAxis(1) * -1, () -> joystick.getRawAxis(2), () -> joystick.getRawAxis(3) * -1,
-                    () -> joystick.getRawButton(6) ? 1.0 : 0.0, () -> joystick.getRawButton(7) ? 1.0 : 0.0,
-                    () -> joystick.getRawButton(4), () -> joystick.getRawButton(5), () -> joystick.getRawButton(1),
-                    () -> joystick.getRawButton(2), () -> joystick.getRawButton(0), () -> joystick.getRawButton(3),
-                    () -> joystick.getRawButton(9), () -> joystick.getRawButton(8), () -> joystick.getRawButton(10),
-                    () -> joystick.getRawButton(11));
+            return Gamepad.create(joystick::getRawAxis,
+                    joystick::getRawButton,
+                    joystick::getPOV,
+                    () -> joystick.getRawAxis(0),
+                    () -> joystick.getRawAxis(1) * -1,
+                    () -> joystick.getRawAxis(2),
+                    () -> joystick.getRawAxis(3) * -1,
+                    () -> joystick.getRawButton(7) ? 1.0 : 0.0, // leftTrigger
+                    () -> joystick.getRawButton(8) ? 1.0 : 0.0, // rightTrigger
+                    () -> joystick.getRawButton(5), // LB
+                    () -> joystick.getRawButton(6), // RB
+                    () -> joystick.getRawButton(2), // A
+                    () -> joystick.getRawButton(3), // B
+                    () -> joystick.getRawButton(1), // X
+                    () -> joystick.getRawButton(4), // Y
+                    () -> joystick.getRawButton(10), // start
+                    () -> joystick.getRawButton(9), // select (back)
+                    () -> joystick.getRawButton(10), // left stick
+                    () -> joystick.getRawButton(11));// right stick
         }
 
         /**
@@ -837,12 +876,25 @@ public class Hardware {
          */
         public static Gamepad logitechF310(int port) {
             Joystick joystick = new Joystick(port);
-            return Gamepad.create(joystick::getRawAxis, joystick::getRawButton, joystick::getPOV, () -> joystick.getRawAxis(0),
-                    () -> joystick.getRawAxis(1) * -1, () -> joystick.getRawAxis(4), () -> joystick.getRawAxis(5) * -1,
-                    () -> joystick.getRawAxis(2), () -> joystick.getRawAxis(3), () -> joystick.getRawButton(5),
-                    () -> joystick.getRawButton(6), () -> joystick.getRawButton(1), () -> joystick.getRawButton(2),
-                    () -> joystick.getRawButton(3), () -> joystick.getRawButton(4), () -> joystick.getRawButton(8),
-                    () -> joystick.getRawButton(7), () -> joystick.getRawButton(9), () -> joystick.getRawButton(10));
+            return Gamepad.create(joystick::getRawAxis,
+                    joystick::getRawButton,
+                    joystick::getPOV,
+                    () -> joystick.getRawAxis(0), // leftX
+                    () -> joystick.getRawAxis(1) * -1, // leftY
+                    () -> joystick.getRawAxis(4), // rightX
+                    () -> joystick.getRawAxis(5) * -1, // rightY
+                    () -> joystick.getRawAxis(2), // leftTrigger
+                    () -> joystick.getRawAxis(3), // rightTrigger
+                    () -> joystick.getRawButton(5), // LB
+                    () -> joystick.getRawButton(6), // RB
+                    () -> joystick.getRawButton(1), // A
+                    () -> joystick.getRawButton(2), // B
+                    () -> joystick.getRawButton(3), // X
+                    () -> joystick.getRawButton(4), // Y
+                    () -> joystick.getRawButton(8), // start
+                    () -> joystick.getRawButton(7), // select (back)
+                    () -> joystick.getRawButton(9), // left stick
+                    () -> joystick.getRawButton(10));// right stick
         }
     }
 }

@@ -16,9 +16,11 @@
 
 package org.strongback.components.ui;
 
+import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 
+import org.strongback.components.Switch;
 import org.strongback.function.DoubleToDoubleFunction;
 
 /**
@@ -81,6 +83,16 @@ public interface ContinuousRange {
      * @return the new scaled IntSupplier; never null
      */
     default public IntSupplier scaleAsInt(double scale) {
-        return () -> (int)(this.read() * scale);
+        return () -> (int) (this.read() * scale);
+    }
+
+    /**
+     * Create a new {@link Switch} from this {@link ContinuousRange} that is triggered when the supplied function is true;
+     *
+     * @param thresholdFunc the function that determines if switch is triggered or not.
+     * @return the new scaled IntSupplier; never null
+     */
+    default public Switch toSwitch(DoubleFunction<Boolean> thresholdFunc) {
+        return () -> thresholdFunc.apply(this.read());
     }
 }
