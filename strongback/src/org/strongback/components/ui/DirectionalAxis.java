@@ -23,12 +23,12 @@ import org.strongback.components.Switch;
  */
 @FunctionalInterface
 public interface DirectionalAxis {
-    public static enum DIRECTION {
+    public static enum Direction {
         UP(0), RIGHT(90), DOWN(180), LEFT(270);
 
         int degree;
 
-        DIRECTION(int degree) {
+        Direction(int degree) {
             this.degree = degree;
         }
     }
@@ -40,7 +40,7 @@ public interface DirectionalAxis {
      */
     public int getDirection();
 
-    public default Switch getDirectionAsSwitch(DIRECTION direction) {
+    public default Switch getDirectionAsSwitch(Direction direction) {
         return () -> this.getDirection() == direction.degree;
     }
 
@@ -49,19 +49,19 @@ public interface DirectionalAxis {
     }
 
     public default Switch getUp() {
-        return this.getDirectionAsSwitch(DIRECTION.UP);
+        return this.getDirectionAsSwitch(Direction.UP);
     }
 
     public default Switch getRight() {
-        return this.getDirectionAsSwitch(DIRECTION.RIGHT);
+        return this.getDirectionAsSwitch(Direction.RIGHT);
     }
 
     public default Switch getDown() {
-        return this.getDirectionAsSwitch(DIRECTION.DOWN);
+        return this.getDirectionAsSwitch(Direction.DOWN);
     }
 
     public default Switch getLeft() {
-        return this.getDirectionAsSwitch(DIRECTION.LEFT);
+        return this.getDirectionAsSwitch(Direction.LEFT);
     }
 
 }
