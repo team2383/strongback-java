@@ -46,30 +46,36 @@ public class SimpleTankDriveRobot extends IterativeRobot {
 
     @Override
     public void robotInit() {
-        // Set up Strongback using its configurator. This is entirely optional, but we won't use events so it's slightly better
+        // Set up Strongback using its configurator. This is entirely optional,
+        // but we won't use events so it's slightly better
         // if we turn them off. All other defaults are fine.
         Strongback.configure().recordNoEvents().initialize();
 
         // Set up the robot hardware ...
         Motor left = Motor.compose(Hardware.Motors.talon(LF_MOTOR_PORT), Hardware.Motors.talon(LR_MOTOR_PORT));
-        Motor right = Motor.compose(Hardware.Motors.talon(RF_MOTOR_PORT), Hardware.Motors.talon(RR_MOTOR_PORT)).invert();
+        Motor right = Motor.compose(Hardware.Motors.talon(RF_MOTOR_PORT), Hardware.Motors.talon(RR_MOTOR_PORT))
+                .invert();
         drive = new TankDrive(left, right);
 
-        // Set up the human input controls for teleoperated mode. We want to use the Logitech Attack 3D's throttle as a
-        // "sensitivity" input to scale the drive speed and throttle, so we'll map it from it's native [-1,1] to a simple scale
+        // Set up the human input controls for teleoperated mode. We want to use
+        // the Logitech Attack 3D's throttle as a
+        // "sensitivity" input to scale the drive speed and throttle, so we'll
+        // map it from it's native [-1,1] to a simple scale
         // factor of [0,1] ...
-        FlightStick joystick = Hardware.HumanInterfaceDevices.logitechAttack3D(JOYSTICK_PORT);
+        FlightStick joystick = Hardware.HumanInterfaceDevices.logitechAttack3(JOYSTICK_PORT);
         ContinuousRange sensitivity = joystick.getThrottle().map(t -> (t + 1.0) / 2.0);
         driveSpeed = joystick.getPitch().scale(sensitivity::read); // scaled
-        turnSpeed = joystick.getRoll().scale(sensitivity::read).invert(); // scaled and inverted
+        turnSpeed = joystick.getRoll().scale(sensitivity::read).invert(); // scaled
+                                                                          // and
+                                                                          // inverted
 
-        // Set up the data recorder to capture the left & right motor speeds (since both motors on the same side should
-        // be at the same speed, we can just use the composed motors for each) and the sensitivity. We have to do this
+        // Set up the data recorder to capture the left & right motor speeds
+        // (since both motors on the same side should
+        // be at the same speed, we can just use the composed motors for each)
+        // and the sensitivity. We have to do this
         // before we start Strongback...
-        Strongback.dataRecorder()
-                  .register("Left motors", left)
-                  .register("Right motors", right)
-                  .register("Sensitivity", sensitivity.scaleAsInt(1000));
+        Strongback.dataRecorder().register("Left motors", left).register("Right motors", right).register("Sensitivity",
+                sensitivity.scaleAsInt(1000));
     }
 
     @Override
@@ -85,7 +91,8 @@ public class SimpleTankDriveRobot extends IterativeRobot {
 
     @Override
     public void disabledInit() {
-        // Tell Strongback that the robot is disabled so it can flush and kill commands.
+        // Tell Strongback that the robot is disabled so it can flush and kill
+        // commands.
         Strongback.disable();
     }
 
