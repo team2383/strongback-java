@@ -22,6 +22,7 @@ import java.util.function.IntSupplier;
 
 import org.strongback.components.Switch;
 import org.strongback.function.DoubleToDoubleFunction;
+import org.strongback.util.Values;
 
 /**
  * Defines a range of values. Default range is [-1.0, 1.0] inclusive.
@@ -84,8 +85,7 @@ public interface ContinuousRange {
      * @return the new mapped range; never null
      */
     default public ContinuousRange mapToRange(double min, double max) {
-        double range = max - min;
-        return () -> (this.read() + 1) * range / 2 + min;
+        return () -> Values.mapRange(-1, 1).toRange(min, max).applyAsDouble(this.read());
     }
 
     /**
