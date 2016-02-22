@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="strongback/src"/>
+	<classpathentry kind="src" path="strongback-testing/src"/>
+	<classpathentry kind="src" path="strongback-tests/src"/>
+	<classpathentry kind="src" path="strongback-examples/src"/>
+	<classpathentry kind="src" path="strongback-tools/src"/>
+	<classpathentry kind="src" path="strongback-tools/test"/>
+	<classpathentry kind="lib" path="libs/ant/ant-contrib-1.0b3.jar"/>
+	<classpathentry kind="lib" path="libs/test/fest-assert-1.4-sources.jar"/>
+	<classpathentry kind="lib" path="libs/test/fest-assert-1.4.jar"/>
+	<classpathentry kind="lib" path="libs/test/fest-util-1.1.6-sources.jar"/>
+	<classpathentry kind="lib" path="libs/test/fest-util-1.1.6.jar"/>
+	<classpathentry kind="lib" path="libs/test/hamcrest-core-1.3-sources.jar"/>
+	<classpathentry kind="lib" path="libs/test/hamcrest-core-1.3.jar"/>
+	<classpathentry kind="lib" path="libs/test/junit-4.11-sources.jar"/>
+	<classpathentry kind="lib" path="libs/test/junit-4.11.jar"/>
+	<classpathentry kind="lib" path="libs/test/metrics-core-3.1.0-sources.jar"/>
+	<classpathentry kind="lib" path="libs/test/metrics-core-3.1.0.jar"/>
+	<classpathentry kind="lib" path="libs/wpilib/java/current/ant/ant-classloadertask.jar"/>
+	<classpathentry kind="lib" path="libs/wpilib/java/current/ant/ant-contrib.jar"/>
+	<classpathentry kind="lib" path="libs/wpilib/java/current/ant/jsch-0.1.50.jar"/>
+	<classpathentry kind="lib" path="libs/wpilib/java/current/lib/NetworkTables-sources.jar"/>
+	<classpathentry kind="lib" path="libs/wpilib/java/current/lib/NetworkTables.jar"/>
+	<classpathentry kind="lib" path="libs/wpilib/java/current/lib/WPILib-sources.jar"/>
+	<classpathentry kind="lib" path="libs/wpilib/java/current/lib/WPILib.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="strongback/build/classes"/>
+</classpath>

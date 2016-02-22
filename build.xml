@@ -137,7 +137,8 @@
             <tarfileset src="${build.dir}/strongback-${strongback.version}.tar"/>
         </zip>
 
-        <unzip src="${build.dir}/strongback-${strongback.version}.zip" dest="${build.dir}/strongback-latest/"></unzip>
+    	<delete dir="${user.home}/strongback"/>
+        <unzip src="${build.dir}/strongback-${strongback.version}.zip" dest="${user.home}/strongback"></unzip>
 
         <gzip destfile="${build.dir}/strongback-${strongback.version}.tar.gz" src="${build.dir}/strongback-${strongback.version}.tar"/>
         <delete file="${build.dir}/strongback-${strongback.version}.tar" />

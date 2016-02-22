@@ -8,7 +8,8 @@
     <property name="test.target.dir" value="${test.output.dir}/classes" />
     <property file="${user.home}/wpilib/wpilib.properties" />
     <property file="${user.home}/wpilib/java/${version}/ant/build.properties" />
-    <property file="${user.home}/strongback/java/ant/build.properties" />
+    <property file="${strongback.home}/strongback.properties" />
+    <property file="${strongback.home}/java/ant/build.properties" />
 
     <import file="${wpilib.ant.dir}/build.xml" />
 	
@@ -38,6 +39,7 @@
     </target>
 
     <target name="compile" description="Compile the source code.">
+    	<echo>Using Strongback version ${strongback.version} compiled on ${build.date}</echo>
         <mkdir dir="${build.dir}" />
         <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false">
             <classpath refid="compile.classpath" />
