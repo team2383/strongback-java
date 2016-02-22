@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
  * </ul>
  */
 @Documented
-@Target( ElementType.TYPE )
-@Retention( RetentionPolicy.RUNTIME )
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Immutable {
 }

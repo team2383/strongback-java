@@ -67,8 +67,8 @@ public class MockPneumaticsModule implements PneumaticsModule {
         lowPressure.setNotTriggered();
     }
 
-    private void runCompressor( boolean isRunning ) {
-        if ( isRunning ) {
+    private void runCompressor(boolean isRunning) {
+        if (isRunning) {
             running.setTriggered(isRunning);
             current.setCurrent(COMPRESSOR_CURRENT_WHEN_RUNNING);
         } else {
@@ -99,6 +99,7 @@ public class MockPneumaticsModule implements PneumaticsModule {
 
     /**
      * These faults clear immediately after they are {@link Fuse#trigger() triggered}.
+     *
      * @see #compressorStickyFaults()
      */
     @Override
@@ -117,7 +118,7 @@ public class MockPneumaticsModule implements PneumaticsModule {
         return this;
     }
 
-    private void triggerFault( MockSwitch stickySwitch ) {
+    private void triggerFault(MockSwitch stickySwitch) {
         // Any fault should always stop the compressor ...
         stickySwitch.setTriggered();
         runCompressor(false);
@@ -127,21 +128,24 @@ public class MockPneumaticsModule implements PneumaticsModule {
         private final Fuse currentTooHigh;
         private final Fuse notConnected;
         private final Fuse shorted;
-        protected MockFaults( StickyFaults sticky ) {
+
+        protected MockFaults(StickyFaults sticky) {
             // These should trip the sticky faults and then immediately reset ...
-            currentTooHigh = Fuse.instantaneous(()->triggerFault(sticky.currentTooHigh));
-            notConnected = Fuse.instantaneous(()->triggerFault(sticky.notConnected));
-            shorted = Fuse.instantaneous(()->triggerFault(sticky.shorted));
+            currentTooHigh = Fuse.instantaneous(() -> triggerFault(sticky.currentTooHigh));
+            notConnected = Fuse.instantaneous(() -> triggerFault(sticky.notConnected));
+            shorted = Fuse.instantaneous(() -> triggerFault(sticky.shorted));
         }
 
         @Override
         public Fuse currentTooHigh() {
             return currentTooHigh;
         }
+
         @Override
         public Fuse notConnected() {
             return notConnected;
         }
+
         @Override
         public Fuse shorted() {
             return shorted;
@@ -157,14 +161,17 @@ public class MockPneumaticsModule implements PneumaticsModule {
         public Switch currentTooHigh() {
             return currentTooHigh;
         }
+
         @Override
         public Switch notConnected() {
             return notConnected;
         }
+
         @Override
         public Switch shorted() {
             return shorted;
         }
+
         protected void reset() {
             currentTooHigh.setNotTriggered();
             notConnected.setNotTriggered();

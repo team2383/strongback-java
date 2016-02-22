@@ -46,10 +46,12 @@ class HardwarePneumaticsModule implements PneumaticsModule {
             public Switch currentTooHigh() {
                 return pcm::getCompressorCurrentTooHighFault;
             }
+
             @Override
             public Switch notConnected() {
                 return pcm::getCompressorNotConnectedFault;
             }
+
             @Override
             public Switch shorted() {
                 return pcm::getCompressorShortedFault;
@@ -60,10 +62,12 @@ class HardwarePneumaticsModule implements PneumaticsModule {
             public Switch currentTooHigh() {
                 return pcm::getCompressorCurrentTooHighStickyFault;
             }
+
             @Override
             public Switch notConnected() {
                 return pcm::getCompressorNotConnectedStickyFault;
             }
+
             @Override
             public Switch shorted() {
                 return pcm::getCompressorShortedStickyFault;

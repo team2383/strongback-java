@@ -81,7 +81,7 @@ public class MockTalonSRX extends MockMotor implements TalonSRX {
 
     @Override
     public MockTalonSRX setFeedbackDevice(FeedbackDevice device) {
-        switch(device) {
+        switch (device) {
             case ANALOG_POTENTIOMETER:
             case ANALOG_ENCODER:
                 this.selectedInput = analogInput;
@@ -225,13 +225,13 @@ public class MockTalonSRX extends MockMotor implements TalonSRX {
         return alive;
     }
 
-    public MockTalonSRX setAlive( boolean alive ) {
+    public MockTalonSRX setAlive(boolean alive) {
         this.alive = alive;
-        if ( !alive ) stop();
+        if (!alive) stop();
         return this;
     }
 
-    private void triggerFault( MockSwitch stickySwitch ) {
+    private void triggerFault(MockSwitch stickySwitch) {
         // Any fault should always stop the motor ...
         stickySwitch.setTriggered();
         stop();
@@ -245,40 +245,48 @@ public class MockTalonSRX extends MockMotor implements TalonSRX {
         private final Fuse forwardLimitSwitch;
         private final Fuse reverseLimitSwitch;
         private final Fuse hardwareFailure;
-        protected MockFaults( StickyFaults sticky ) {
+
+        protected MockFaults(StickyFaults sticky) {
             // These should trip the sticky faults and then immediately reset ...
-            overTemperature = Fuse.instantaneous(()->triggerFault(sticky.overTemperature));
-            underVoltage = Fuse.instantaneous(()->triggerFault(sticky.underVoltage));
-            forwardSoftLimit = Fuse.instantaneous(()->triggerFault(sticky.forwardSoftLimit));
-            reverseSoftLimit = Fuse.instantaneous(()->triggerFault(sticky.reverseSoftLimit));
-            forwardLimitSwitch = Fuse.instantaneous(()->triggerFault(sticky.forwardLimitSwitch));
-            reverseLimitSwitch = Fuse.instantaneous(()->triggerFault(sticky.reverseLimitSwitch));
-            hardwareFailure = Fuse.instantaneous(()->triggerFault(sticky.hardwareFailure));
+            overTemperature = Fuse.instantaneous(() -> triggerFault(sticky.overTemperature));
+            underVoltage = Fuse.instantaneous(() -> triggerFault(sticky.underVoltage));
+            forwardSoftLimit = Fuse.instantaneous(() -> triggerFault(sticky.forwardSoftLimit));
+            reverseSoftLimit = Fuse.instantaneous(() -> triggerFault(sticky.reverseSoftLimit));
+            forwardLimitSwitch = Fuse.instantaneous(() -> triggerFault(sticky.forwardLimitSwitch));
+            reverseLimitSwitch = Fuse.instantaneous(() -> triggerFault(sticky.reverseLimitSwitch));
+            hardwareFailure = Fuse.instantaneous(() -> triggerFault(sticky.hardwareFailure));
         }
+
         @Override
         public Fuse overTemperature() {
             return overTemperature;
         }
+
         @Override
         public Fuse underVoltage() {
             return underVoltage;
         }
+
         @Override
         public Fuse forwardSoftLimit() {
             return forwardSoftLimit;
         }
+
         @Override
         public Fuse reverseSoftLimit() {
             return reverseSoftLimit;
         }
+
         @Override
         public Fuse forwardLimitSwitch() {
             return forwardLimitSwitch;
         }
+
         @Override
         public Fuse reverseLimitSwitch() {
             return reverseLimitSwitch;
         }
+
         @Override
         public Fuse hardwareFailure() {
             return hardwareFailure;
@@ -298,30 +306,37 @@ public class MockTalonSRX extends MockMotor implements TalonSRX {
         public Switch overTemperature() {
             return overTemperature;
         }
+
         @Override
         public Switch underVoltage() {
             return underVoltage;
         }
+
         @Override
         public Switch forwardSoftLimit() {
             return forwardSoftLimit;
         }
+
         @Override
         public Switch reverseSoftLimit() {
             return reverseSoftLimit;
         }
+
         @Override
         public Switch forwardLimitSwitch() {
             return forwardLimitSwitch;
         }
+
         @Override
         public Switch reverseLimitSwitch() {
             return reverseLimitSwitch;
         }
+
         @Override
         public Switch hardwareFailure() {
             return hardwareFailure;
         }
+
         protected void reset() {
             overTemperature.setNotTriggered();
             underVoltage.setNotTriggered();

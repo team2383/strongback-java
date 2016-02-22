@@ -57,11 +57,11 @@ public class GyroscopeTest extends AngleSensorTest {
         return rate;
     }
 
-    protected static void setRate( double newRate ) {
+    protected static void setRate(double newRate) {
         rate = newRate;
     }
 
-    private static Gyroscope sensor = Gyroscope.create(GyroscopeTest::getValue,GyroscopeTest::getRate);
+    private static Gyroscope sensor = Gyroscope.create(GyroscopeTest::getValue, GyroscopeTest::getRate);
 
     @Override
     @Before

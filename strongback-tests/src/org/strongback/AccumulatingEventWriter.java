@@ -95,7 +95,7 @@ public class AccumulatingEventWriter implements EventWriter {
     }
 
     public void assertMatch(long time, String eventType, boolean value) {
-        assertMatch(time,eventType,value?1:0);
+        assertMatch(time, eventType, value ? 1 : 0);
     }
 
     public void assertEmpty() {

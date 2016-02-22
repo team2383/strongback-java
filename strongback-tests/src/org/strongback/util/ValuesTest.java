@@ -28,7 +28,7 @@ public class ValuesTest {
 
     @Test
     public void shouldMapRangeFromZeroCenteredToPositiveOne() {
-        DoubleToDoubleFunction func = Values.mapRange(-1.0,1.0,0.0,1.0);
+        DoubleToDoubleFunction func = Values.mapRange(-1.0, 1.0, 0.0, 1.0);
 
         // Verify minimum range is properly limited ...
         assertThat(func.applyAsDouble(-1.0)).isEqualTo(0.0, TOLERANCE);
@@ -54,7 +54,7 @@ public class ValuesTest {
 
     @Test
     public void shouldMapRangeUsingTranslationOnly() {
-        DoubleToDoubleFunction func = Values.mapRange(0.0,4.0,10.0,14.0);
+        DoubleToDoubleFunction func = Values.mapRange(0.0, 4.0, 10.0, 14.0);
 
         // Verify minimum range is properly limited ...
         assertThat(func.applyAsDouble(0.0)).isEqualTo(10.0, TOLERANCE);
@@ -82,7 +82,7 @@ public class ValuesTest {
 
     @Test
     public void shouldMapRangeUsingScaleOnly() {
-        DoubleToDoubleFunction func = Values.mapRange(1.0,5.0).toRange(1.0,2.0);
+        DoubleToDoubleFunction func = Values.mapRange(1.0, 5.0).toRange(1.0, 2.0);
 
         // Verify minimum range is properly limited ...
         assertThat(func.applyAsDouble(0.0)).isEqualTo(1.0, TOLERANCE);

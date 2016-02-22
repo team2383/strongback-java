@@ -80,7 +80,7 @@ public interface Fuse extends Switch {
      * @param whenTriggered the function that is to be called when the fuse is triggered; may be null
      * @return the fuse; never null
      */
-    public static Fuse instantaneous( Runnable whenTriggered ) {
+    public static Fuse instantaneous(Runnable whenTriggered) {
         return new Fuse() {
 
             @Override

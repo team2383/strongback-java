@@ -35,7 +35,7 @@ final class FileDataWriter implements DataWriter {
     private final long fileSize;
 
     public FileDataWriter(Iterable<DataRecorderChannel> channels, Supplier<String> filenameGenerator, int writesPerSecond,
-            int runningTimeInSeconds) {
+                          int runningTimeInSeconds) {
         this.filenameGenerator = filenameGenerator;
         this.channels = channels;
 
@@ -44,7 +44,7 @@ final class FileDataWriter implements DataWriter {
 
         // Infrastructure for variable element length
         recordLength = Integer.BYTES;
-        recordLength += (Short.BYTES * suppliers.size());
+        recordLength += Short.BYTES * suppliers.size();
         fileSize = numWrites * recordLength + 1024; // add extra room for header and miscellaneous
 
         openIfNeeded();
@@ -81,7 +81,7 @@ final class FileDataWriter implements DataWriter {
                 assert name != null;
                 writer.write(name);
             });
-        } else if ( writer.remaining() < recordLength) {
+        } else if (writer.remaining() < recordLength) {
             System.err.println("Insuffient space to write next all of next record, closing file");
             close();
             openIfNeeded();
@@ -89,9 +89,9 @@ final class FileDataWriter implements DataWriter {
     }
 
     @Override
-    public void write(long time) {
+    public void write(Object object) {
         openIfNeeded();
-        writer.write((int) time);
+        writer.write(object);
         suppliers.forEach((supplier) -> writer.write((short) supplier.getAsInt()));
     }
 

@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.strongback.Executable;
 import org.strongback.annotation.ThreadSafe;
 import org.strongback.control.Controller;
 import org.strongback.control.PIDController;
@@ -35,7 +34,7 @@ import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 @ThreadSafe
 class HardwareTalonController extends HardwareTalonSRX implements TalonController {
 
-    private static final Executable NO_OP = (clock) -> {
+    private static final Runnable NO_OP = () -> {
     };
 
     private static final class Gains implements TalonController.Gains {
@@ -74,10 +73,12 @@ class HardwareTalonController extends HardwareTalonSRX implements TalonControlle
         public double getFeedForward() {
             return feedForward;
         }
+
         @Override
         public double getIzone() {
             return iZone;
         }
+
         @Override
         public double getCloseLoopRampRate() {
             return closedLoopRampRate;
@@ -152,12 +153,12 @@ class HardwareTalonController extends HardwareTalonSRX implements TalonControlle
     }
 
     @Override
-    public Executable executable() {
+    public Runnable runnable() {
         return NO_OP;
     }
 
     @Override
-    public boolean hasExecutable() {
+    public boolean hasRunnable() {
         return false;
     }
 
@@ -268,16 +269,17 @@ class HardwareTalonController extends HardwareTalonSRX implements TalonControlle
 
     @Override
     public TalonController withProfile(int profile, double p, double i, double d) {
-        return withProfile(profile,p,i,d,0.0,0,0.0);
+        return withProfile(profile, p, i, d, 0.0, 0, 0.0);
     }
 
     @Override
     public TalonController withProfile(int profile, double p, double i, double d, double feedForward) {
-        return withProfile(profile,p,i,d,feedForward,0,0.0);
+        return withProfile(profile, p, i, d, feedForward, 0, 0.0);
     }
 
     @Override
-    public TalonController withProfile(int profile, double p, double i, double d, double feedForward, int izone, double closeLoopRampRate) {
+    public TalonController withProfile(int profile, double p, double i, double d, double feedForward, int izone,
+            double closeLoopRampRate) {
         talon.setPID(p, i, d, feedForward, izone, closeLoopRampRate, profile);
         return this;
     }
@@ -302,7 +304,8 @@ class HardwareTalonController extends HardwareTalonSRX implements TalonControlle
 
     @Override
     public TalonController.Gains getGainsForCurrentProfile() {
-        return new Gains(talon.getP(),talon.getI(), talon.getD(), talon.getF(), talon.getIZone(), talon.getCloseLoopRampRate());
+        return new Gains(talon.getP(), talon.getI(), talon.getD(), talon.getF(), talon.getIZone(),
+                talon.getCloseLoopRampRate());
     }
 
     @Override

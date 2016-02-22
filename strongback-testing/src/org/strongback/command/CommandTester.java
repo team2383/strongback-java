@@ -16,7 +16,6 @@
 
 package org.strongback.command;
 
-
 /**
  * A Strongback testing utility that can be used in unit tests
  */

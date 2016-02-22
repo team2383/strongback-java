@@ -16,14 +16,15 @@
 
 package org.strongback.control;
 
-import org.strongback.Executable;
-import org.strongback.Executor;
+import java.lang.reflect.Executable;
+import java.util.concurrent.Executor;
+
 import org.strongback.Strongback;
 import org.strongback.command.Requirable;
 
 /**
- * A simple controller that can manage a component (typically a motor) based upon a desired {@link #withTarget(double) target value}
- * and {@link #withTolerance(double) tolerance}.
+ * A simple controller that can manage a component (typically a motor) based upon a desired {@link #withTarget(double) target
+ * value} and {@link #withTolerance(double) tolerance}.
  *
  * @author Randall Hauch
  * @see PIDController
@@ -38,29 +39,31 @@ public interface Controller extends Requirable {
     public boolean isEnabled();
 
     /**
-    * Enable this controller so that it does read inputs, compute errors, and generate outputs when {@link #computeOutput()} is
-    * called.
-    *
-    * @return this object so that methods can be chained; never null
-    */
-   public Controller enable();
+     * Enable this controller so that it does read inputs, compute errors, and generate outputs when {@link #computeOutput()} is
+     * called.
+     *
+     * @return this object so that methods can be chained; never null
+     */
+    public Controller enable();
 
-   /**
-    * Disable this controller to <em>not</em> read inputs, compute errors, and generate outputs when {@link #computeOutput()}
-    * is called.
-    *
-    * @return this object so that methods can be chained; never null
-    */
-   public Controller disable();
+    /**
+     * Disable this controller to <em>not</em> read inputs, compute errors, and generate outputs when {@link #computeOutput()}
+     * is called.
+     *
+     * @return this object so that methods can be chained; never null
+     */
+    public Controller disable();
 
     /**
      * Get the current measured value for this controller.
+     *
      * @return the current value
      */
     public double getValue();
 
     /**
      * Get the target value for this controller.
+     *
      * @return the target value
      * @see #withTarget(double)
      */
@@ -86,6 +89,7 @@ public interface Controller extends Requirable {
 
     /**
      * Get the absolute tolerance for this controller.
+     *
      * @return the target value
      * @see #withTolerance(double)
      */
@@ -98,7 +102,7 @@ public interface Controller extends Requirable {
      * @return <code>true</code> if the proposed value is within the tolerance of the target, or <code>false</code> otherwise
      */
     public default boolean checkTolerance(double value) {
-        return Math.abs(value) <= (getTarget() - getTolerance());
+        return Math.abs(value) <= getTarget() - getTolerance();
     }
 
     /**
@@ -131,23 +135,24 @@ public interface Controller extends Requirable {
     /**
      * Return whether the {@link Executable} instance returned by {@link #executable()} does anything useful. Software-based
      * controllers may often return <code>true</code>, whereas many hardware-based controllers may return <code>false</code>.
-     * @return <code>true</code> if the {@link #executable()} does useful work and enables the controller to operate
-     * continually and automatically, or <code>false</code> if the {@link #executable()} does nothing.
+     *
+     * @return <code>true</code> if the {@link #executable()} does useful work and enables the controller to operate continually
+     *         and automatically, or <code>false</code> if the {@link #executable()} does nothing.
      */
-    public default boolean hasExecutable() {
+    public default boolean hasRunnable() {
         return true;
     }
 
     /**
-     * Get the {@link Executable} instance that will continuously {@link #computeOutput() execute} this controller to read
-     * inputs from the source and generate outputs to reach the {@link #getTarget() target}.
+     * Get the {@link Runnable} instance that will continuously {@link #computeOutput() execute} this controller to read inputs
+     * from the source and generate outputs to reach the {@link #getTarget() target}.
      * <p>
      * If this is used, then this same controller should <em>never</em> be used with commands. This is not checked, so robot
      * programs are responsible for ensuring this does not happen.
      *
-     * @return the {@link Executable} object that can be registered with an {@link Executor} (typically Strongback's
+     * @return the {@link Runnable} object that can be registered with an {@link Executor} (typically Strongback's
      *         {@link Strongback#executor() central executor}); never null and always the same instance for this controller
      */
-    public Executable executable();
+    public Runnable runnable();
 
 }

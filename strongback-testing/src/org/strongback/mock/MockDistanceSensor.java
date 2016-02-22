@@ -20,8 +20,8 @@ import org.strongback.annotation.ThreadSafe;
 import org.strongback.components.DistanceSensor;
 
 /**
- * A {@link DistanceSensor} implementation useful for testing, where the distance can be explicitly set in the test
- * case so that the known value is read by the component that uses an {@link DistanceSensor}.
+ * A {@link DistanceSensor} implementation useful for testing, where the distance can be explicitly set in the test case so that
+ * the known value is read by the component that uses an {@link DistanceSensor}.
  *
  * @author Randall Hauch
  */

@@ -40,15 +40,15 @@ public class AsyncEventRecorderTest {
 
     @Test
     public void shouldProperlyPassEventsThroughQueuedWriter() {
-        recorder.record(EVENT_TYPE_1,true);
-        recorder.record(EVENT_TYPE_1,false);
-        recorder.record(EVENT_TYPE_2,false);
-        recorder.record(EVENT_TYPE_2,true);
-        recorder.record(EVENT_TYPE_2,false);
+        recorder.record(EVENT_TYPE_1, true);
+        recorder.record(EVENT_TYPE_1, false);
+        recorder.record(EVENT_TYPE_2, false);
+        recorder.record(EVENT_TYPE_2, true);
+        recorder.record(EVENT_TYPE_2, false);
         // Verify we haven't written anything yet
         writer.assertEmpty();
-        // Now execute the recorder (which will write out everything its recorder so far) ...
-        recorder.execute(clock.currentTimeInMillis());
+        // Now run the recorder (which will write out everything its recorder so far) ...
+        recorder.run();
         // Verify that events have been written ...
         writer.assertMatch(clock.currentTimeInMillis(), EVENT_TYPE_1, true);
         writer.assertMatch(clock.currentTimeInMillis(), EVENT_TYPE_1, false);
@@ -56,13 +56,13 @@ public class AsyncEventRecorderTest {
         writer.assertMatch(clock.currentTimeInMillis(), EVENT_TYPE_2, true);
         writer.assertMatch(clock.currentTimeInMillis(), EVENT_TYPE_2, false);
         writer.assertEmpty();
-        // Increment the clock and execute the recorder again (which has nothing to write) ...
+        // Increment the clock and run the recorder again (which has nothing to write) ...
         clock.incrementBySeconds(1);
-        recorder.execute(clock.currentTimeInMillis());
+        recorder.run();
         writer.assertEmpty();
-        // Write a few more events and execute the recorder ...
-        recorder.record(EVENT_TYPE_3,10);
-        recorder.execute(clock.currentTimeInMillis());
+        // Write a few more events and run the recorder ...
+        recorder.record(EVENT_TYPE_3, 10);
+        recorder.run();
         // Verify that the record was written ...
         writer.assertMatch(clock.currentTimeInMillis(), EVENT_TYPE_3, 10);
         writer.assertEmpty();

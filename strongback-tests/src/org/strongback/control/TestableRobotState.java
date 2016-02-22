@@ -21,8 +21,8 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
- * Some gritty code that manipulates some WPILib components and replaces the implementation of others so that WPILib classes
- * can be used within unit tests.
+ * Some gritty code that manipulates some WPILib components and replaces the implementation of others so that WPILib classes can
+ * be used within unit tests.
  * <p>
  * If this is needed in the future outside of this package, it can be made public and moved as needed.
  */
@@ -58,13 +58,13 @@ class TestableRobotState extends RobotState {
                     private boolean m_running = false;
 
                     private long getMsClock() {
-                        return (long)(getFPGATime() / 1000.0);
+                        return (long) (getFPGATime() / 1000.0);
                     }
 
                     /**
-                     * Get the current time from the timer. If the clock is running it is derived from
-                     * the current system clock the start time stored in the timer class. If the clock
-                     * is not running, then return the time when it was last stopped.
+                     * Get the current time from the timer. If the clock is running it is derived from the current system clock
+                     * the start time stored in the timer class. If the clock is not running, then return the time when it was
+                     * last stopped.
                      *
                      * @return Current time value for this timer in seconds
                      */
@@ -73,12 +73,12 @@ class TestableRobotState extends RobotState {
                         if (m_running) {
                             return ((getMsClock() - m_startTime) + m_accumulatedTime) / 1000.0;
                         }
-                            return m_accumulatedTime;
+                        return m_accumulatedTime;
                     }
 
                     /**
-                     * Reset the timer by setting the time to 0.
-                     * Make the timer startTime the current time so new requests will be relative now
+                     * Reset the timer by setting the time to 0. Make the timer startTime the current time so new requests will
+                     * be relative now
                      */
                     @Override
                     public synchronized void reset() {
@@ -87,8 +87,7 @@ class TestableRobotState extends RobotState {
                     }
 
                     /**
-                     * Start the timer running.
-                     * Just set the running flag to true indicating that all time requests should be
+                     * Start the timer running. Just set the running flag to true indicating that all time requests should be
                      * relative to the system clock.
                      */
                     @Override
@@ -98,10 +97,8 @@ class TestableRobotState extends RobotState {
                     }
 
                     /**
-                     * Stop the timer.
-                     * This computes the time as of now and clears the running flag, causing all
-                     * subsequent time requests to be read from the accumulated time rather than
-                     * looking at the system clock.
+                     * Stop the timer. This computes the time as of now and clears the running flag, causing all subsequent time
+                     * requests to be read from the accumulated time rather than looking at the system clock.
                      */
                     @Override
                     public synchronized void stop() {
@@ -111,9 +108,9 @@ class TestableRobotState extends RobotState {
                     }
 
                     /**
-                     * Check if the period specified has passed and if it has, advance the start
-                     * time by that period. This is useful to decide if it's time to do periodic
-                     * work without drifting later by the time it took to get around to checking.
+                     * Check if the period specified has passed and if it has, advance the start time by that period. This is
+                     * useful to decide if it's time to do periodic work without drifting later by the time it took to get
+                     * around to checking.
                      *
                      * @param period The period to check for (in seconds).
                      * @return If the period has passed.
@@ -132,12 +129,12 @@ class TestableRobotState extends RobotState {
             }
 
             /**
-             * Return the approximate match time
-             * The FMS does not send an official match time to the robots, but does send an approximate match time.
-             * The value will count down the time remaining in the current period (auto or teleop).
+             * Return the approximate match time The FMS does not send an official match time to the robots, but does send an
+             * approximate match time. The value will count down the time remaining in the current period (auto or teleop).
              * Warning: This is not an official time (so it cannot be used to dispute ref calls or guarantee that a function
-             * will trigger before the match ends)
-             * The Practice Match function of the DS approximates the behavior seen on the field.
+             * will trigger before the match ends) The Practice Match function of the DS approximates the behavior seen on the
+             * field.
+             *
              * @return Time remaining in current match period (auto or teleop) in seconds
              */
             @Override
@@ -161,8 +158,7 @@ class TestableRobotState extends RobotState {
     }
 
     /**
-     * Return the system clock time in seconds. Return the time from the
-     * FPGA hardware clock in seconds since the FPGA started.
+     * Return the system clock time in seconds. Return the time from the FPGA hardware clock in seconds since the FPGA started.
      *
      * @return Robot running time in seconds.
      */

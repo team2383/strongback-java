@@ -59,7 +59,6 @@ public class MockMotor implements Motor {
         };
     }
 
-
     @Override
     public String toString() {
         return Double.toString(getSpeed());

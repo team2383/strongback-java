@@ -30,7 +30,7 @@ public class SwitchTest {
     @Test
     public void shouldAlwaysBeTriggered() {
         Switch s = Switch.alwaysTriggered();
-        for ( int i=0; i!=100; ++i) {
+        for (int i = 0; i != 100; ++i) {
             assertThat(s.isTriggered()).isEqualTo(true);
         }
     }
@@ -38,7 +38,7 @@ public class SwitchTest {
     @Test
     public void shouldNeverBeTriggered() {
         Switch s = Switch.neverTriggered();
-        for ( int i=0; i!=100; ++i) {
+        for (int i = 0; i != 100; ++i) {
             assertThat(s.isTriggered()).isEqualTo(false);
         }
     }

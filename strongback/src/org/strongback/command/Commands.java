@@ -70,7 +70,9 @@ final class Commands {
 
         // Reserve the requirements
         for (Requirable required : requirements) {
-            if (inUse.containsKey(required)) inUse.get(required).cancel();
+            if (inUse.containsKey(required)) {
+                inUse.get(required).cancel();
+            }
             inUse.put(required, command);
         }
         beingExecuted.offer(command);
@@ -78,7 +80,7 @@ final class Commands {
     }
 
     private void remove(CommandRunner runner) {
-        runner.getRequired().forEach(required->inUse.remove(required));
+        runner.getRequired().forEach(required -> inUse.remove(required));
         runner.after(this);
     }
 

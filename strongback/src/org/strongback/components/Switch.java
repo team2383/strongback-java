@@ -35,7 +35,7 @@ public interface Switch {
 
     /**
      * Create a switch that is always triggered.
-     * 
+     *
      * @return the always-triggered switch; never null
      */
     public static Switch alwaysTriggered() {
@@ -44,7 +44,7 @@ public interface Switch {
 
     /**
      * Create a switch that is never triggered.
-     * 
+     *
      * @return the never-triggered switch; never null
      */
     public static Switch neverTriggered() {

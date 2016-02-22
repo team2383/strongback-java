@@ -94,7 +94,7 @@ public abstract class AbstractDoubleMockTest {
         if (zeroable == null) return;
         setter.accept(0.0);
         zeroable.zero();
-        assertThat(getter.getAsDouble()).isEqualTo(0.0,NEAR_ZERO);
+        assertThat(getter.getAsDouble()).isEqualTo(0.0, NEAR_ZERO);
     }
 
     @Test

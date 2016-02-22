@@ -195,13 +195,13 @@ public final class Values {
      * For example:
      *
      * <pre>
-     * Values.mapRange(-1.0,1.0).toRange(0.0,1.0);
+     * Values.mapRange(-1.0, 1.0).toRange(0.0, 1.0);
      * </pre>
      *
      * is equivalent to:
      *
      * <pre>
-     * Values.mapRange(-1.0,1.0,0.0,1.0);
+     * Values.mapRange(-1.0, 1.0, 0.0, 1.0);
      * </pre>
      *
      * @param minInputValue the minimum value of the range of input values to the function

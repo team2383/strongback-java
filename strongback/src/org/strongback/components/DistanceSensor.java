@@ -87,6 +87,7 @@ public interface DistanceSensor extends Zeroable {
                 double dist = sensor.getDistanceInInches();
                 return dist == 0.0 ? 0.0 : -dist;
             }
+
             @Override
             public DistanceSensor zero() {
                 return sensor.zero();

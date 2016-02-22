@@ -32,7 +32,7 @@ abstract class MockZeroable implements Zeroable {
         return value - zero;
     }
 
-    protected void setValue( double value) {
+    protected void setValue(double value) {
         this.value = value;
     }
 

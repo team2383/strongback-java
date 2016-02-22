@@ -28,18 +28,23 @@ import org.strongback.function.IntToIntFunction;
 public interface InputDevice {
     /**
      * Get the analog axis for the given number.
+     *
      * @param axis the axis number
      * @return the analog axis, or null if there is no such axis
      */
     public ContinuousRange getAxis(int axis);
+
     /**
      * Get the button for the given number.
+     *
      * @param button the button number
      * @return the button, or null if there is no such button
      */
     public Switch getButton(int button);
+
     /**
      * Get the directional axis for the given D-pad number.
+     *
      * @param pad the pad number
      * @return the directional axis, or null if there is no such axis for the given D-pad number
      */
@@ -47,24 +52,28 @@ public interface InputDevice {
 
     /**
      * Create an input device from the supplied mapping functions.
+     *
      * @param axisToValue the function that maps an integer to a double value for the axis
      * @param buttonNumberToSwitch the function that maps an integer to whether the button is pressed
      * @param padToValue the function that maps an integer to the directional axis output
      * @return the resulting input device; never null
      */
-    public static InputDevice create( IntToDoubleFunction axisToValue, IntToBooleanFunction buttonNumberToSwitch, IntToIntFunction padToValue ) {
+    public static InputDevice create(IntToDoubleFunction axisToValue, IntToBooleanFunction buttonNumberToSwitch,
+            IntToIntFunction padToValue) {
         return new InputDevice() {
             @Override
             public ContinuousRange getAxis(int axis) {
-                return ()->axisToValue.applyAsDouble(axis);
+                return () -> axisToValue.applyAsDouble(axis);
             }
+
             @Override
             public Switch getButton(int button) {
-                return ()->buttonNumberToSwitch.applyAsBoolean(button);
+                return () -> buttonNumberToSwitch.applyAsBoolean(button);
             }
+
             @Override
             public DirectionalAxis getDPad(int pad) {
-                return ()->padToValue.applyAsInt(pad);
+                return () -> padToValue.applyAsInt(pad);
             }
         };
     }

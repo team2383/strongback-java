@@ -30,10 +30,10 @@ import org.strongback.control.PIDController;
 public class MockPIDController extends MockController implements PIDController {
 
     private volatile int currentProfile = PIDController.DEFAULT_PROFILE;
-    private final Map<Integer,Gains> profiles = new ConcurrentHashMap<>();
+    private final Map<Integer, Gains> profiles = new ConcurrentHashMap<>();
 
     public MockPIDController() {
-        withGains(0.0,0.0,0.0);
+        withGains(0.0, 0.0, 0.0);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class MockPIDController extends MockController implements PIDController {
 
     @Override
     public synchronized MockPIDController withProfile(int profile, double p, double i, double d, double feedForward) {
-        profiles.put(profile, new Gains(p,i,d,feedForward));
+        profiles.put(profile, new Gains(p, i, d, feedForward));
         return this;
     }
 
@@ -71,7 +71,7 @@ public class MockPIDController extends MockController implements PIDController {
 
     @Override
     public synchronized MockPIDController useProfile(int profile) {
-        if ( !profiles.containsKey(profile) ) throw new IllegalArgumentException("Invalid profile");
+        if (!profiles.containsKey(profile)) throw new IllegalArgumentException("Invalid profile");
         currentProfile = profile;
         return this;
     }

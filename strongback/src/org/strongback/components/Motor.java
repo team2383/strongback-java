@@ -138,11 +138,16 @@ public interface Motor extends SpeedSensor, SpeedController, Stoppable, Requirab
      * {@link TankDrive}, where all motors on one side are physically inverted compared to the motors on the other side.
      * <p>
      * For example:
+     *
      * <pre>
      *   Motor left = ...
      *   Motor right = ...
      *   DriveTrain drive = TankDrive.create(left, Motor.invert(right));
-     * </pre> or <pre>
+     * </pre>
+     *
+     * or
+     *
+     * <pre>
      *   Motor leftFront = ...
      *   Motor leftRear = ...
      *   Motor rightFront = ...

@@ -31,6 +31,7 @@ public interface Accelerometer {
 
     /**
      * Get the acceleration in g's.
+     *
      * @return the acceleration
      */
     public double getAcceleration();

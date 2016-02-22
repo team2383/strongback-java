@@ -24,12 +24,11 @@ package org.strongback;
  */
 public interface DataWriter extends AutoCloseable {
 
-    /**
-     * Writes the current status of the data channels.
-     *
-     * @param time the current time in milliseconds
-     */
-    public void write(long time);
+    public default void writeTime() {
+        write(Strongback.timeSystem().currentTimeInMillis());
+    }
+
+    public void write(Object object);
 
     /**
      * Frees the resources used by this {@link DataWriter}.

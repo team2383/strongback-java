@@ -23,6 +23,7 @@ import org.strongback.components.PowerPanel;
 
 /**
  * A mock implementation of the {@link PowerPanel}, which has 16 channels
+ *
  * @author Randall Hauch
  */
 public class MockPowerPanel implements PowerPanel {
@@ -34,11 +35,12 @@ public class MockPowerPanel implements PowerPanel {
 
     /**
      * Create a mock power panel with the specified number of channels.
+     *
      * @param numChannels the number of channels; must be positive
      */
-    public MockPowerPanel( int numChannels ) {
+    public MockPowerPanel(int numChannels) {
         channels = new ArrayList<>(numChannels);
-        for ( int i= 0; i!= numChannels; ++i ) {
+        for (int i = 0; i != numChannels; ++i) {
             channels.add(new MockCurrentSensor());
         }
     }

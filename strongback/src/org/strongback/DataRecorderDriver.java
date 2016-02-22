@@ -28,7 +28,7 @@ import org.strongback.annotation.ThreadSafe;
  * @author Randall Hauch
  */
 @ThreadSafe
-final class DataRecorderDriver implements Executable {
+final class DataRecorderDriver implements Runnable {
 
     private final DataRecorderChannels channels;
     private final Function<Iterable<DataRecorderChannel>, DataWriter> writerFactory;
@@ -57,7 +57,9 @@ final class DataRecorderDriver implements Executable {
         AtomicReference<DataWriter> unclosed = new AtomicReference<>();
         try {
             writer.getAndUpdate((existing) -> {
-                if (existing != NULL_WRITER) unclosed.set(existing);
+                if (existing != NULL_WRITER) {
+                    unclosed.set(existing);
+                }
                 return NULL_WRITER;
             });
         } finally {
@@ -68,13 +70,13 @@ final class DataRecorderDriver implements Executable {
     }
 
     @Override
-    public void execute(long timeInMillis) {
-        writer.get().write(timeInMillis);
+    public void run() {
+        writer.get().writeTime();
     }
 
     private static final DataWriter NULL_WRITER = new DataWriter() {
         @Override
-        public void write(long time) {
+        public void write(Object object) {
         }
 
         @Override

@@ -63,7 +63,7 @@ public class HardwareTalonSRX_EncoderInputSensorTest {
     @Test
     public void shouldReturnZeroWhenMeasuredPositionIsHalfRotationAndVelocityAreZero() {
         encoderPulsesPerRotation = 360;
-        positionInEdges = 180 * 4;  // edges for 180 degrees
+        positionInEdges = 180 * 4; // edges for 180 degrees
         velocityInEdges = 0.0;
         createSensor();
         assertThat(sensor.getAngle()).isEqualTo(180.0d, DELTA);
@@ -75,7 +75,7 @@ public class HardwareTalonSRX_EncoderInputSensorTest {
     @Test
     public void shouldReturnZeroWhenMeasuredPositionIsOneAndOneHalfRotationAndVelocityAreZero() {
         encoderPulsesPerRotation = 360;
-        positionInEdges = (180+360) * 4;  // edges for 540 degrees
+        positionInEdges = (180 + 360) * 4; // edges for 540 degrees
         velocityInEdges = 0.0;
         createSensor();
         assertThat(sensor.getAngle()).isEqualTo(540.0d, DELTA);
@@ -87,7 +87,7 @@ public class HardwareTalonSRX_EncoderInputSensorTest {
     @Test
     public void shouldReturnZeroWhenMeasuredPositionIsThreeAndOneHalfRotationAndVelocityAreZero() {
         encoderPulsesPerRotation = 360;
-        positionInEdges = (180+360*3) * 4;  // edges for 1260 degrees
+        positionInEdges = (180 + 360 * 3) * 4; // edges for 1260 degrees
         velocityInEdges = 0.0;
         createSensor();
         assertThat(sensor.getAngle()).isEqualTo(1260.0d, DELTA);
@@ -99,8 +99,8 @@ public class HardwareTalonSRX_EncoderInputSensorTest {
     @Test
     public void shouldReturnZeroWhenMeasuredPositionIsThreeAndOneHalfRotationAndVelocityAreZeroWithPrecisionEncoder() {
         encoderPulsesPerRotation = 250;
-        rotationInDegrees = 180+360*3;
-        positionInEdges = rotationInDegrees * encoderPulsesPerRotation /360 * 4;
+        rotationInDegrees = 180 + 360 * 3;
+        positionInEdges = rotationInDegrees * encoderPulsesPerRotation / 360 * 4;
         velocityInEdges = 0.0;
         createSensor();
         assertThat(sensor.getAngle()).isEqualTo(1260.0d, DELTA);
@@ -114,7 +114,7 @@ public class HardwareTalonSRX_EncoderInputSensorTest {
         double rotationsPerSecond = 20;
         encoderPulsesPerRotation = 360;
         rotationInDegrees = 360;
-        positionInEdges = rotationInDegrees * encoderPulsesPerRotation /360 * 4;
+        positionInEdges = rotationInDegrees * encoderPulsesPerRotation / 360 * 4;
         velocityInEdges = rotationsPerSecond * 4 * 360.0 * cyclePeriodInSeconds; // per cycle, or 28800 position units / second
         createSensor();
         assertThat(sensor.getAngle()).isEqualTo(360.0, DELTA);

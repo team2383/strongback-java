@@ -27,8 +27,10 @@ public class Version {
     static {
         PROPS = new Properties();
         try (InputStream stream = Version.class.getClassLoader().getResourceAsStream("strongback.properties")) {
-            if ( stream != null ) PROPS.load(stream);
-            else System.err.println("Unable to find the strongback.properties file");
+            if (stream != null)
+                PROPS.load(stream);
+            else
+                System.err.println("Unable to find the strongback.properties file");
         } catch (IOException e) {
             System.err.println("Unable to read the strongback.properties file");
             e.printStackTrace(System.err);

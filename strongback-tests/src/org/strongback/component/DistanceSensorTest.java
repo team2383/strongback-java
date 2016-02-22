@@ -35,7 +35,7 @@ public class DistanceSensorTest extends AbstractDoubleValueTest {
     }
 
     protected static void assertDistanceInFeet(double distance) {
-        assertValue(distance, sensor::getDistanceInFeet, distance/12.0);
+        assertValue(distance, sensor::getDistanceInFeet, distance / 12.0);
     }
 
     private static DistanceSensor sensor = DistanceSensor.create(DistanceSensorTest::getValue);

@@ -21,9 +21,9 @@ import org.strongback.components.ThreeAxisAccelerometer;
 import org.strongback.components.TwoAxisAccelerometer;
 
 /**
- * A {@link TwoAxisAccelerometer} implementation useful for testing, where the two accelerometers are mocks themselves and
- * can be explicitly set in the test case
- * so that the known acceleration values are read by the component that uses an {@link TwoAxisAccelerometer}.
+ * A {@link TwoAxisAccelerometer} implementation useful for testing, where the two accelerometers are mocks themselves and can
+ * be explicitly set in the test case so that the known acceleration values are read by the component that uses an
+ * {@link TwoAxisAccelerometer}.
  *
  * @author Randall Hauch
  */
@@ -39,6 +39,7 @@ public class MockThreeAxisAccelerometer extends MockTwoAxisAccelerometer impleme
 
     @Override
     public String toString() {
-        return "" + getXDirection().getAcceleration() + ", " + getYDirection().getAcceleration() + ", " + getZDirection().getAcceleration() + " g/s\u00B2";
+        return "" + getXDirection().getAcceleration() + ", " + getYDirection().getAcceleration() + ", "
+                + getZDirection().getAcceleration() + " g/s\u00B2";
     }
 }

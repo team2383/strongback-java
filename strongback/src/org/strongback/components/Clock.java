@@ -63,7 +63,8 @@ public interface Clock {
     public static Clock fpga() {
         try {
             Utility.getFPGATime();
-            // If we're here, then the method did not throw an exception and there is FPGA hardware on this platform ...
+            // If we're here, then the method did not throw an exception and
+            // there is FPGA hardware on this platform ...
             return Utility::getFPGATime;
         } catch (UnsatisfiedLinkError | NoClassDefFoundError e) {
             throw new StrongbackRequirementException("Missing FPGA hardware or software", e);

@@ -138,7 +138,7 @@
         </zip>
 
     	<delete dir="${user.home}/strongback"/>
-        <unzip src="${build.dir}/strongback-${strongback.version}.zip" dest="${user.home}/strongback"></unzip>
+        <unzip src="${build.dir}/strongback-${strongback.version}.zip" dest="${user.home}"></unzip>
 
         <gzip destfile="${build.dir}/strongback-${strongback.version}.tar.gz" src="${build.dir}/strongback-${strongback.version}.tar"/>
         <delete file="${build.dir}/strongback-${strongback.version}.tar" />

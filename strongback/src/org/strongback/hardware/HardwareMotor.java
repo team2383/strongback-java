@@ -35,7 +35,7 @@ final class HardwareMotor implements Motor {
     private final SpeedController controller;
     private final DoubleToDoubleFunction speedValidator;
 
-    HardwareMotor(SpeedController controller, DoubleToDoubleFunction speedValidator ) {
+    HardwareMotor(SpeedController controller, DoubleToDoubleFunction speedValidator) {
         this.controller = controller;
         this.speedValidator = speedValidator;
     }

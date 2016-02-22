@@ -60,7 +60,7 @@ public class UnmanagedControllerCommand extends ControllerCommand {
      * @param requirements the {@link Requirable}s this {@link Command} requires
      */
     protected UnmanagedControllerCommand(double timeoutInSeconds, Controller controller, Runnable initializer,
-            Requirable... requirements) {
+                                         Requirable... requirements) {
         super(timeoutInSeconds, controller, initializer, requirements);
     }
 

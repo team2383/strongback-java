@@ -38,7 +38,7 @@ public class MockPneumaticsModuleTest {
 
     @Test
     public void shouldNotRunCompressorAutomaticallyWhenSetToAutomaticModeAndLowPressureIsNotTriggered() {
-        module.lowPressureSwitch().setNotTriggered();   // start out with enough pressure
+        module.lowPressureSwitch().setNotTriggered(); // start out with enough pressure
         module.automaticMode().on();
         assertThat(module.compressorRunningSwitch().isTriggered()).isEqualTo(false);
         assertThat(module.compressorCurrent().getCurrent()).isEqualTo(0.0);
@@ -66,7 +66,7 @@ public class MockPneumaticsModuleTest {
 
     @Test
     public void shouldRunCompressorAutomaticallyWhenSetToAutomaticModeAndLowPressureIsTriggered() {
-        module.lowPressureSwitch().setTriggered();   // start out with low pressure
+        module.lowPressureSwitch().setTriggered(); // start out with low pressure
         module.automaticMode().on();
         assertThat(module.compressorRunningSwitch().isTriggered()).isEqualTo(true);
         assertThat(module.compressorCurrent().getCurrent()).isEqualTo(MockPneumaticsModule.COMPRESSOR_CURRENT_WHEN_RUNNING);
@@ -106,7 +106,7 @@ public class MockPneumaticsModuleTest {
         assertThat(module.compressorStickyFaults().currentTooHigh().isTriggered()).isEqualTo(true);
 
         // Start the compressor ...
-        module.lowPressureSwitch().setTriggered();   // start out with low pressure
+        module.lowPressureSwitch().setTriggered(); // start out with low pressure
         module.automaticMode().on();
 
         module.compressorFaults().notConnected().trigger();

@@ -45,6 +45,7 @@ public class MockRelay implements Relay {
 
     /**
      * Set the state of this relay to {@link org.strongback.components.Relay.State#SWITCHING_OFF}.
+     *
      * @return this instance to enable chaining methods; never null
      */
     public MockRelay switchingOff() {
@@ -54,6 +55,7 @@ public class MockRelay implements Relay {
 
     /**
      * Set the state of this relay to {@link org.strongback.components.Relay.State#SWITCHING_ON}.
+     *
      * @return this instance to enable chaining methods; never null
      */
     public MockRelay switchingOn() {

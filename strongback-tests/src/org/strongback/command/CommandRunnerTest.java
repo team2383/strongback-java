@@ -35,6 +35,7 @@ public class CommandRunnerTest {
         public CommandListener listener() {
             return CommandListener.noOp();
         }
+
         @Override
         public Logger logger() {
             return Logger.noOp();
@@ -43,7 +44,7 @@ public class CommandRunnerTest {
 
     @Test
     public void shouldRunCommandWithTimeout() {
-        WatchedCommand watched = WatchedCommand.watch(Command.pause(1000,TimeUnit.MILLISECONDS));
+        WatchedCommand watched = WatchedCommand.watch(Command.pause(1000, TimeUnit.MILLISECONDS));
         CommandRunner runner = new CommandRunner(watched);
         assertThat(runner.step(INITIAL_TIME)).isFalse();
         assertThat(runner.state()).isEqualTo(CommandState.RUNNING);
@@ -63,22 +64,25 @@ public class CommandRunnerTest {
             public void initialize() {
                 throw new IllegalStateException();
             }
+
             @Override
             public boolean execute() {
                 return false;
             }
         });
-        CommandRunner runner = new CommandRunner(CONTEXT,watched);
+        CommandRunner runner = new CommandRunner(CONTEXT, watched);
         assertThat(runner.step(INITIAL_TIME)).isTrue(); // completes because it is interrupted
         assertInterrupted(watched);
     }
 
     @Test
     public void shouldInterruptCommandThatThrowsExceptionDuringFirstExecute() {
-        WatchedCommand watched = WatchedCommand.watch(Command.create((Runnable)()->{throw new IllegalStateException();}));
-        CommandRunner runner = new CommandRunner(CONTEXT,watched);
+        WatchedCommand watched = WatchedCommand.watch(Command.create((Runnable) () -> {
+            throw new IllegalStateException();
+        }));
+        CommandRunner runner = new CommandRunner(CONTEXT, watched);
         assertThat(runner.step(INITIAL_TIME)).isTrue(); // completes because it is interrupted
-        assertExecutedAtLeast(watched,1);
+        assertExecutedAtLeast(watched, 1);
         assertInterrupted(watched);
     }
 
@@ -86,41 +90,42 @@ public class CommandRunnerTest {
     public void shouldInterruptCommandThatThrowsExceptionDuringSecondExecute() {
         WatchedCommand watched = WatchedCommand.watch(new Command() {
             private boolean once = false;
+
             @Override
             public boolean execute() {
-                if ( once ) throw new IllegalStateException();
+                if (once) throw new IllegalStateException();
                 once = true;
                 return false;
             }
         });
-        CommandRunner runner = new CommandRunner(CONTEXT,watched);
+        CommandRunner runner = new CommandRunner(CONTEXT, watched);
         assertThat(runner.step(INITIAL_TIME)).isFalse(); // executed correctly the first time
-        assertExecutedAtLeast(watched,1);
+        assertExecutedAtLeast(watched, 1);
         assertThat(runner.step(INITIAL_TIME)).isTrue(); // completes because it is interrupted
-        assertExecutedAtLeast(watched,2);
+        assertExecutedAtLeast(watched, 2);
         assertInterrupted(watched);
     }
 
-    protected void assertIncomplete( WatchedCommand watched ) {
+    protected void assertIncomplete(WatchedCommand watched) {
         assertThat(watched.isInitialized()).isTrue();
         assertThat(watched.isExecuted()).isTrue();
         assertThat(watched.isEnded()).isFalse();
         assertThat(watched.isInterrupted()).isFalse();
     }
 
-    protected void assertComplete( WatchedCommand watched ) {
+    protected void assertComplete(WatchedCommand watched) {
         assertThat(watched.isInitialized()).isTrue();
         assertThat(watched.isExecuted()).isTrue();
         assertThat(watched.isEnded()).isTrue();
         assertThat(watched.isInterrupted()).isFalse();
     }
 
-    protected void assertInterrupted( WatchedCommand watched ) {
+    protected void assertInterrupted(WatchedCommand watched) {
         assertThat(watched.isInterrupted()).isTrue();
         assertThat(watched.isEnded()).isFalse();
     }
 
-    protected void assertExecutedAtLeast( WatchedCommand watched, int minimum ) {
+    protected void assertExecutedAtLeast(WatchedCommand watched, int minimum) {
         assertThat(watched.isInitialized()).isTrue();
         assertThat(watched.isExecutedAtLeast(minimum)).isTrue();
     }

@@ -19,10 +19,10 @@ package org.strongback.function;
 import java.util.function.Function;
 
 /**
- * Represents a function that accepts a double-valued argument and produces a
- * double-valued result.  This is the {@code double}-to-{@code double} primitive
- * specialization for {@link Function}.
- * <p>This is a functional interface whose functional method is {@link #applyAsDouble(double)}.
+ * Represents a function that accepts a double-valued argument and produces a double-valued result. This is the {@code double}
+ * -to-{@code double} primitive specialization for {@link Function}.
+ * <p>
+ * This is a functional interface whose functional method is {@link #applyAsDouble(double)}.
  *
  * @see Function
  * @author Randall Hauch

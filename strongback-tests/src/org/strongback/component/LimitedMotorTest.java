@@ -66,17 +66,16 @@ public class LimitedMotorTest {
         assertStoppedAtReverseLimit();
     }
 
-
     @Test
     public void shouldNotLimitMotorInForwardDirectionWhenReverseLimitIsSwitched() {
         limited.forward(1.0);
         assertForwardRotation(1.0);
         limited.forward(0.1);
         assertForwardRotation(0.1);
-        reverseSwitch.setTriggered();   // doesn't affect anything ...
+        reverseSwitch.setTriggered(); // doesn't affect anything ...
         assertForwardRotation(0.1);
         forwardSwitch.setTriggered();
-        assertStoppedAtUnknonwPosition();   // since both switches are triggered, we don't know where we are
+        assertStoppedAtUnknonwPosition(); // since both switches are triggered, we don't know where we are
     }
 
     @Test
@@ -85,22 +84,23 @@ public class LimitedMotorTest {
         assertReverseRotation(1.0);
         limited.reverse(0.1);
         assertReverseRotation(0.1);
-        forwardSwitch.setTriggered();   // doesn't affect anything ...
+        forwardSwitch.setTriggered(); // doesn't affect anything ...
         assertReverseRotation(0.1);
         reverseSwitch.setTriggered();
-        assertStoppedAtUnknonwPosition();   // since both switches are triggered, we don't know where we are
+        assertStoppedAtUnknonwPosition(); // since both switches are triggered, we don't know where we are
     }
+
     protected void assertForwardRotation(double speed) {
         assertThat(limited.getSpeed()).isEqualTo(speed);
         assertThat(limited.isAtForwardLimit()).isEqualTo(false);
-        //assertThat(limited.isAtReverseLimit()).isEqualTo(false);  // not necessarily the case in all situations
+        // assertThat(limited.isAtReverseLimit()).isEqualTo(false); // not necessarily the case in all situations
         assertThat(limited.getPosition()).isEqualTo(Position.UNKNOWN);
         assertThat(limited.getDirection()).isEqualTo(Direction.FORWARD);
     }
 
     protected void assertReverseRotation(double speed) {
-        assertThat(limited.getSpeed()).isEqualTo(-1*speed);
-        //assertThat(limited.isAtForwardLimit()).isEqualTo(false);  // not necessarily the case in all situations
+        assertThat(limited.getSpeed()).isEqualTo(-1 * speed);
+        // assertThat(limited.isAtForwardLimit()).isEqualTo(false); // not necessarily the case in all situations
         assertThat(limited.isAtReverseLimit()).isEqualTo(false);
         assertThat(limited.getPosition()).isEqualTo(Position.UNKNOWN);
         assertThat(limited.getDirection()).isEqualTo(Direction.REVERSE);
@@ -109,22 +109,22 @@ public class LimitedMotorTest {
     protected void assertStoppedAtForwardLimit() {
         assertThat(limited.getSpeed()).isEqualTo(0.0);
         assertThat(limited.isAtForwardLimit()).isEqualTo(true);
-        //assertThat(limited.isAtReverseLimit()).isEqualTo(false);  // not necessarily the case in all situations
+        // assertThat(limited.isAtReverseLimit()).isEqualTo(false); // not necessarily the case in all situations
         assertThat(limited.getPosition()).isEqualTo(Position.FORWARD_LIMIT);
         assertThat(limited.getDirection()).isEqualTo(Direction.STOPPED);
     }
 
     protected void assertStoppedAtReverseLimit() {
-        assertThat(limited.getSpeed()).isEqualTo(0.0,Delta.delta(0.00001));
-        //assertThat(limited.isAtForwardLimit()).isEqualTo(false);  // not necessarily the case in all situations
+        assertThat(limited.getSpeed()).isEqualTo(0.0, Delta.delta(0.00001));
+        // assertThat(limited.isAtForwardLimit()).isEqualTo(false); // not necessarily the case in all situations
         assertThat(limited.isAtReverseLimit()).isEqualTo(true);
         assertThat(limited.getPosition()).isEqualTo(Position.REVERSE_LIMIT);
         assertThat(limited.getDirection()).isEqualTo(Direction.STOPPED);
     }
 
     protected void assertStoppedAtUnknonwPosition() {
-        assertThat(limited.getSpeed()).isEqualTo(0.0,Delta.delta(0.00001));
-        //assertThat(limited.isAtForwardLimit()).isEqualTo(false);  // not necessarily the case in all situations
+        assertThat(limited.getSpeed()).isEqualTo(0.0, Delta.delta(0.00001));
+        // assertThat(limited.isAtForwardLimit()).isEqualTo(false); // not necessarily the case in all situations
         assertThat(limited.isAtReverseLimit()).isEqualTo(true);
         assertThat(limited.getPosition()).isEqualTo(Position.UNKNOWN);
         assertThat(limited.getDirection()).isEqualTo(Direction.STOPPED);

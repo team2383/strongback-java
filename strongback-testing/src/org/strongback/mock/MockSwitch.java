@@ -19,8 +19,8 @@ package org.strongback.mock;
 import org.strongback.components.Switch;
 
 /**
- * A {@link Switch} implementation useful for testing, where the triggered state can be explicitly set in the test
- * case so that component using the Switch can determine if it is triggered.
+ * A {@link Switch} implementation useful for testing, where the triggered state can be explicitly set in the test case so that
+ * component using the Switch can determine if it is triggered.
  *
  */
 public class MockSwitch implements Switch {
@@ -34,16 +34,18 @@ public class MockSwitch implements Switch {
 
     /**
      * Set whether this switch is to be triggered.
+     *
      * @param triggered true if the switch is to be triggered, or false otherwise
      * @return this object to allow chaining of methods; never null
      */
-    public MockSwitch setTriggered( boolean triggered ) {
+    public MockSwitch setTriggered(boolean triggered) {
         this.triggered = triggered;
         return this;
     }
 
     /**
      * Set this switch as being triggered.
+     *
      * @return this object to allow chaining of methods; never null
      */
     public MockSwitch setTriggered() {
@@ -53,6 +55,7 @@ public class MockSwitch implements Switch {
 
     /**
      * Set this switch as being not triggered.
+     *
      * @return this object to allow chaining of methods; never null
      */
     public MockSwitch setNotTriggered() {

@@ -16,7 +16,6 @@
 
 package org.strongback.mock;
 
-import org.strongback.Executable;
 import org.strongback.control.Controller;
 
 /**
@@ -28,7 +27,7 @@ public class MockController implements Controller {
     private double setpoint = 0.0d;
     private double tolerance = 0.0d;
     private double value = 0.0d;
-    private final Executable executable = (time)->computeOutput();
+    private final Runnable runnable = () -> computeOutput();
 
     @Override
     public boolean isEnabled() {
@@ -80,13 +79,13 @@ public class MockController implements Controller {
     }
 
     @Override
-    public boolean hasExecutable() {
+    public boolean hasRunnable() {
         return true;
     }
 
     @Override
-    public Executable executable() {
-        return executable;
+    public Runnable runnable() {
+        return runnable;
     }
 
     @Override
@@ -94,7 +93,7 @@ public class MockController implements Controller {
         return value;
     }
 
-    public MockController setValue( double value ) {
+    public MockController setValue(double value) {
         this.value = value;
         return this;
     }

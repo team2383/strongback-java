@@ -18,6 +18,7 @@ package org.strongback.components;
 
 /**
  * A component that can be zeroed.
+ *
  * @author Randall Hauch
  */
 @FunctionalInterface
@@ -25,6 +26,7 @@ public interface Zeroable {
 
     /**
      * Change the output so that the current value is considered to be 0
+     *
      * @return this object to allow chaining of methods; never null
      */
     public Zeroable zero();

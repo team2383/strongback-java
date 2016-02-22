@@ -20,6 +20,7 @@ import org.strongback.annotation.ThreadSafe;
 
 /**
  * A simple sensor that reports the speed.
+ *
  * @author Randall Hauch
  */
 @ThreadSafe

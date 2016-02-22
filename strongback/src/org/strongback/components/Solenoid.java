@@ -48,12 +48,14 @@ public interface Solenoid extends Requirable {
 
     /**
      * Extends this solenoid.
+     *
      * @return this object to allow chaining of methods; never null
      */
     Solenoid extend();
 
     /**
      * Retracts this solenoid.
+     *
      * @return this object to allow chaining of methods; never null
      */
     Solenoid retract();

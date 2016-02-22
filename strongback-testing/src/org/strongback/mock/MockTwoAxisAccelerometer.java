@@ -20,9 +20,9 @@ import org.strongback.annotation.Immutable;
 import org.strongback.components.TwoAxisAccelerometer;
 
 /**
- * A {@link TwoAxisAccelerometer} implementation useful for testing, where the two accelerometers are mocks themselves and
- * can be explicitly set in the test case
- * so that the known acceleration values are read by the component that uses an {@link TwoAxisAccelerometer}.
+ * A {@link TwoAxisAccelerometer} implementation useful for testing, where the two accelerometers are mocks themselves and can
+ * be explicitly set in the test case so that the known acceleration values are read by the component that uses an
+ * {@link TwoAxisAccelerometer}.
  *
  * @author Randall Hauch
  */

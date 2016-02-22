@@ -59,7 +59,7 @@ public class FileUtils {
      * @return an absolute {@link File} representing that path
      */
     public static final File resolvePath(String path) {
-        return resolvePath(path,() -> System.getProperty("user.home"));
+        return resolvePath(path, () -> System.getProperty("user.home"));
     }
 
     /**

@@ -20,6 +20,7 @@ import org.strongback.command.Command;
 
 /**
  * A sample command that pauses for a specified number of seconds.
+ *
  * @author Randall Hauch
  */
 public class Pause extends Command {

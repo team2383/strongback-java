@@ -29,12 +29,14 @@ import org.strongback.annotation.NotThreadSafe;
  * {@link #sequentially(Command...)} and the list of {@link Command} instances, in order. The whole block finishes only when the
  * last {@link Command} is done.
  *
- * <p>Commands executed at the same time (in parallel) are <em>simultaneous</em>, and are defined with a call to
+ * <p>
+ * Commands executed at the same time (in parallel) are <em>simultaneous</em>, and are defined with a call to
  * {@link #simultaneously(Command...)} and a list of the {@link Command} instances. Order is not important, as they are all are
  * executed at the same time. The whole block finishes only when all {@link Command}s have completed.
  *
- * <p>When a command is to be executed completely independently of the command group, then that command (or group of commands)
- * can be <em>forked</em>. A command (or group) is forked by calling {@link #fork(Command)} with the one {@link Command}, a
+ * <p>
+ * When a command is to be executed completely independently of the command group, then that command (or group of commands) can
+ * be <em>forked</em>. A command (or group) is forked by calling {@link #fork(Command)} with the one {@link Command}, a
  * {@link CommandGroup} subclass, or a group created with {@link #sequentially(Command...)} or
  * {@link #simultaneously(Command...)}. For the purposes of {@link #sequentially(Command...)} the block finishes instantly.
  *
@@ -113,8 +115,8 @@ public class CommandGroup extends Command {
      * @param commands the {@link Command}s to be executed
      * @return the {@link CommandGroup} wrapping the {@link Command}s
      */
-    public static CommandGroup runSequentially( Command ... commands ) {
-        return new CommandGroup(commands,Type.SEQUENTIAL);
+    public static CommandGroup runSequentially(Command... commands) {
+        return new CommandGroup(commands, Type.SEQUENTIAL);
     }
 
     /**
@@ -123,12 +125,12 @@ public class CommandGroup extends Command {
      * @param commands the {@link Command}s to be executed
      * @return the {@link CommandGroup} wrapping the {@link Command}s
      */
-    public static CommandGroup runSimultaneously( Command ... commands ) {
-        return new CommandGroup(commands,Type.PARRALLEL);
+    public static CommandGroup runSimultaneously(Command... commands) {
+        return new CommandGroup(commands, Type.PARALLEL);
     }
 
     static enum Type {
-        SEQUENTIAL, PARRALLEL, FORK;
+        SEQUENTIAL, PARALLEL, FORK;
     }
 
     private Command root;
@@ -169,7 +171,7 @@ public class CommandGroup extends Command {
      * @return the {@link CommandGroup} wrapping the {@link Command}s
      */
     public CommandGroup simultaneously(Command... commands) {
-        CommandGroup cg = new CommandGroup(commands, Type.PARRALLEL);
+        CommandGroup cg = new CommandGroup(commands, Type.PARALLEL);
         root = cg;
         return cg;
     }

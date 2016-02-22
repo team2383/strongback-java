@@ -16,10 +16,12 @@
 
 package org.strongback.control;
 
+import java.lang.reflect.Executable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
@@ -28,8 +30,6 @@ import java.util.function.Supplier;
 
 import org.strongback.DataRecordable;
 import org.strongback.DataRecorder;
-import org.strongback.Executable;
-import org.strongback.Executor;
 import org.strongback.Strongback;
 import org.strongback.annotation.Immutable;
 import org.strongback.annotation.ThreadSafe;
@@ -108,18 +108,9 @@ public class SoftwarePIDController implements LiveWindowSendable, PIDController 
     private volatile double prevError = 0.0d;
     private volatile double result = 0.0d;
     private volatile ITable table;
-    private final Executable executable = new Executable() {
-        @Override
-        public void execute(long timeInMillis) {
-            computeOutput();
-        }
-    };
-    private final ITableListener listener = new ITableListener() {
-        @Override
-        public void valueChanged(ITable table, String key, Object value, boolean isNew) {
-            SoftwarePIDController.this.valueChanged(table, key, value, isNew);
-        }
-    };
+    private final Runnable runnable = () -> computeOutput();
+    private final ITableListener listener = (table, key, value, isNew) -> SoftwarePIDController.this.valueChanged(table, key,
+            value, isNew);
 
     /**
      * Create a new PID+FF controller that uses the supplied source for inputs and sends outputs to the supplied consumer.
@@ -133,7 +124,7 @@ public class SoftwarePIDController implements LiveWindowSendable, PIDController 
      * @param output the output to which the calculated output is to be send; may not be null
      */
     public SoftwarePIDController(Supplier<SourceType> sourceType, DoubleSupplier source, DoubleConsumer output) {
-        this(sourceType.get(),source,output);
+        this(sourceType.get(), source, output);
     }
 
     /**
@@ -169,8 +160,8 @@ public class SoftwarePIDController implements LiveWindowSendable, PIDController 
      *         {@link Strongback#executor() central executor}); never null and always the same instance for this controller
      */
     @Override
-    public Executable executable() {
-        return executable;
+    public Runnable runnable() {
+        return runnable;
     }
 
     @Override
@@ -326,9 +317,7 @@ public class SoftwarePIDController implements LiveWindowSendable, PIDController 
      * @see #continuousInputs(boolean)
      */
     public SoftwarePIDController withInputRange(double minimumInput, double maximumInput) {
-        if (minimumInput > maximumInput) {
-            throw new IllegalArgumentException("Lower bound is greater than upper bound");
-        }
+        if (minimumInput > maximumInput) throw new IllegalArgumentException("Lower bound is greater than upper bound");
         Target target = this.target.withInputRange(minimumInput, maximumInput); // recalculates setpoint within range
         this.target = target;
         updateSetpoint(target);
@@ -394,9 +383,7 @@ public class SoftwarePIDController implements LiveWindowSendable, PIDController 
      * @throws IllegalArgumentException if the minimum is greater than the maximum
      */
     public SoftwarePIDController withOutputRange(double minimumOutput, double maximumOutput) {
-        if (minimumOutput > maximumOutput) {
-            throw new IllegalArgumentException("Lower bound is greater than upper bound");
-        }
+        if (minimumOutput > maximumOutput) throw new IllegalArgumentException("Lower bound is greater than upper bound");
         target = target.withOutputRange(minimumOutput, maximumOutput);
         return this;
     }
@@ -432,7 +419,7 @@ public class SoftwarePIDController implements LiveWindowSendable, PIDController 
                             totalError = target.maxOutput / gains.p;
                         }
                         // Calculate the new result based upon PD+FF ...
-                        result = (gains.p * totalError) + (gains.d * error) + (target.setpoint * gains.feedForward);
+                        result = gains.p * totalError + gains.d * error + target.setpoint * gains.feedForward;
                     }
                     break;
                 case DISTANCE:
@@ -452,8 +439,8 @@ public class SoftwarePIDController implements LiveWindowSendable, PIDController 
                         totalError = 0.0;
                     }
                     // Calculate the new result based upon PID+FF ...
-                    result = (gains.p * error) + (gains.i * totalError) + (gains.d * (error - prevError))
-                            + (target.setpoint * gains.feedForward);
+                    result = gains.p * error + gains.i * totalError + gains.d * (error - prevError)
+                            + target.setpoint * gains.feedForward;
                     break;
             }
 
@@ -615,7 +602,7 @@ public class SoftwarePIDController implements LiveWindowSendable, PIDController 
         }
 
         public Target(double setpoint, double minInput, double maxInput, double tolerance, boolean continuous, double minOutput,
-                double maxOutput) {
+                      double maxOutput) {
             this.minInput = minInput;
             this.maxInput = maxInput;
             this.tolerance = tolerance;
@@ -656,7 +643,7 @@ public class SoftwarePIDController implements LiveWindowSendable, PIDController 
         }
 
         public boolean isWithinTolerance(double value) {
-            return Math.abs(value) <= (setpoint - tolerance);
+            return Math.abs(value) <= setpoint - tolerance;
         }
 
         public double calculateError(double input) {
@@ -682,7 +669,9 @@ public class SoftwarePIDController implements LiveWindowSendable, PIDController 
 
     protected void onTable(Consumer<ITable> updateTable) {
         ITable table = this.table;
-        if (table != null) updateTable.accept(table);
+        if (table != null) {
+            updateTable.accept(table);
+        }
     }
 
     protected void valueChanged(ITable table, String key, Object value, boolean isNew) {
@@ -696,9 +685,9 @@ public class SoftwarePIDController implements LiveWindowSendable, PIDController 
             if (gains.p != table.getNumber("p", 0.0) || gains.i != table.getNumber("i", 0.0)
                     || gains.d != table.getNumber("d", 0.0) || gains.feedForward != table.getNumber("f", 0.0)) {
                 withGains(table.getNumber("p", 0.0),
-                          table.getNumber("i", 0.0),
-                          table.getNumber("d", 0.0),
-                          table.getNumber("f", 0.0));
+                        table.getNumber("i", 0.0),
+                        table.getNumber("d", 0.0),
+                        table.getNumber("f", 0.0));
             }
         } else if (key.equals("setpoint")) {
             Target target = this.target;

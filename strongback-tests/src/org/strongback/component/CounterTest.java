@@ -51,7 +51,7 @@ public class CounterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotAllowNegativeInitialValue() {
-        Counter.circular(0,-1,100);
+        Counter.circular(0, -1, 100);
     }
 
     @Test

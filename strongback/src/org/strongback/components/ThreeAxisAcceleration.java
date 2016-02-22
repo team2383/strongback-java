@@ -26,12 +26,14 @@ public final class ThreeAxisAcceleration extends TwoAxisAcceleration {
     private final double z;
 
     protected ThreeAxisAcceleration(double x, double y, double z) {
-        super(x,y);
+        super(x, y);
         this.z = z;
     }
+
     public double getZ() {
         return z;
     }
+
     @Override
     public String toString() {
         return "[" + getX() + ',' + getY() + ',' + getZ() + "]";

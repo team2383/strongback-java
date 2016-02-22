@@ -277,7 +277,7 @@ public class Mock {
     }
 
     protected static int nextDeviceId() {
-        return (int)CAN_DEVICE_ID_GENERATOR.getAndIncrement();
+        return (int) CAN_DEVICE_ID_GENERATOR.getAndIncrement();
     }
 
     /**

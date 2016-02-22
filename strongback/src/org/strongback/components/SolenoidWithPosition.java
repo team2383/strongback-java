@@ -63,14 +63,14 @@ public interface SolenoidWithPosition extends Solenoid {
         return getPosition() == Position.RETRACTED;
     }
 
-
     /**
      * Create a solenoid that uses the supplied function to determine the position.
+     *
      * @param solenoid the solenoid; may not be null
      * @param positionSupplier the function that returns the position; may not be null
      * @return the {@link SolenoidWithPosition} instance; never null
      */
-    public static SolenoidWithPosition create(Solenoid solenoid, Supplier<Position> positionSupplier ) {
+    public static SolenoidWithPosition create(Solenoid solenoid, Supplier<Position> positionSupplier) {
         return new SolenoidWithPosition() {
             private Position position = positionSupplier.get();
 
@@ -108,22 +108,23 @@ public interface SolenoidWithPosition extends Solenoid {
 
     /**
      * Create a solenoid that uses the two given switches to determine position.
+     *
      * @param solenoid the solenoid; may not be null
      * @param retractSwitch the switch that determines if the solenoid is retracted; may not be null
      * @param extendSwitch the switch that determines if the solenoid is extended; may not be null
      * @return the {@link SolenoidWithPosition} instance; never null
      */
-    public static SolenoidWithPosition create(Solenoid solenoid, Switch retractSwitch, Switch extendSwitch ) {
-        return create(solenoid,()->{
-            if ( extendSwitch.isTriggered() ) {
-                if ( retractSwitch.isTriggered() ) {
+    public static SolenoidWithPosition create(Solenoid solenoid, Switch retractSwitch, Switch extendSwitch) {
+        return create(solenoid, () -> {
+            if (extendSwitch.isTriggered()) {
+                if (retractSwitch.isTriggered()) {
                     // Both switches are triggered -- WTF???
                     return Position.UNKNOWN;
                 }
                 // Extended but not retracted ...
                 return Position.EXTENDED;
             }
-            if ( retractSwitch.isTriggered() ) {
+            if (retractSwitch.isTriggered()) {
                 // Retracted but not extended
                 return Position.RETRACTED;
             }

@@ -20,8 +20,8 @@ import org.strongback.annotation.ThreadSafe;
 import org.strongback.components.CurrentSensor;
 
 /**
- * A {@link CurrentSensor} implementation useful for testing, where the current (in amps) can be explicitly set in the test
- * case so that the known value is read by the component that uses an {@link CurrentSensor}.
+ * A {@link CurrentSensor} implementation useful for testing, where the current (in amps) can be explicitly set in the test case
+ * so that the known value is read by the component that uses an {@link CurrentSensor}.
  *
  * @author Randall Hauch
  */

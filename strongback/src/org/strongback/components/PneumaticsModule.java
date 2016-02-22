@@ -71,6 +71,7 @@ public interface PneumaticsModule {
 
     /**
      * Clear all {@link #compressorStickyFaults() sticky compressor faults} that may have been triggered.
+     *
      * @return this instance so that methods can be chained; never null
      */
     public PneumaticsModule clearStickyFaults();
@@ -82,18 +83,21 @@ public interface PneumaticsModule {
 
         /**
          * The switch that is {@link Switch#isTriggered() triggered} when the compressor is not connected.
+         *
          * @return the switch; never null
          */
         Switch notConnected();
 
         /**
          * The switch that is {@link Switch#isTriggered() triggered} when the compressor current is too high.
+         *
          * @return the switch; never null
          */
         Switch currentTooHigh();
 
         /**
          * The switch that is {@link Switch#isTriggered() triggered} when the compressor is not running because it is shorted.
+         *
          * @return the switch; never null
          */
         Switch shorted();

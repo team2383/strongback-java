@@ -35,11 +35,11 @@ abstract class AbstractDoubleValueTest {
         return value;
     }
 
-    protected static void setValue( double value) {
+    protected static void setValue(double value) {
         AbstractDoubleValueTest.value = value;
     }
 
-    protected static void assertValue(double value, DoubleSupplier getter, double result ) {
+    protected static void assertValue(double value, DoubleSupplier getter, double result) {
         setValue(value);
         assertThat(getter.getAsDouble()).isEqualTo(result, Delta.delta(0.0001));
     }

@@ -38,7 +38,7 @@ public class TankDrive implements Requirable {
     public static final double DEFAULT_MINIMUM_SPEED = 0.02;
     public static final double DEFAULT_MAXIMUM_SPEED = 1.0;
     public static final DoubleToDoubleFunction DEFAULT_SPEED_LIMITER = Values.symmetricLimiter(DEFAULT_MINIMUM_SPEED,
-                                                                                               DEFAULT_MAXIMUM_SPEED);
+            DEFAULT_MAXIMUM_SPEED);
 
     private static final double SENSITIVITY_HIGH = 0.75;
     private static final double SENSITIVITY_LOW = 0.75;

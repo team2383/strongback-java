@@ -21,8 +21,8 @@ import org.strongback.components.CurrentSensor;
 import org.strongback.components.Solenoid;
 
 /**
- * A {@link Solenoid} implementation useful for testing, where the current (in amps) can be explicitly set in the test
- * case so that the known value is read by the component that uses an {@link CurrentSensor}.
+ * A {@link Solenoid} implementation useful for testing, where the current (in amps) can be explicitly set in the test case so
+ * that the known value is read by the component that uses an {@link CurrentSensor}.
  *
  * @author Randall Hauch
  */
@@ -32,21 +32,21 @@ public class MockSolenoid implements Solenoid {
     private volatile Direction direction = Direction.STOPPED;
     private final boolean completeImmediately;
 
-    protected MockSolenoid( boolean completeImmediately ) {
+    protected MockSolenoid(boolean completeImmediately) {
         this.completeImmediately = completeImmediately;
     }
 
     @Override
     public MockSolenoid extend() {
         direction = Direction.EXTENDING;
-        if ( completeImmediately ) direction = Direction.STOPPED;
+        if (completeImmediately) direction = Direction.STOPPED;
         return this;
     }
 
     @Override
     public MockSolenoid retract() {
         direction = Direction.EXTENDING;
-        if ( completeImmediately ) direction = Direction.STOPPED;
+        if (completeImmediately) direction = Direction.STOPPED;
         return this;
     }
 
@@ -57,6 +57,7 @@ public class MockSolenoid implements Solenoid {
 
     /**
      * Stop any movement of this solenoid.
+     *
      * @return this object so that methods can be chained together; never null
      */
     public MockSolenoid stop() {

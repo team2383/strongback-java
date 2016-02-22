@@ -51,7 +51,7 @@ final class CommandRunner {
 
     private static final CommandListener NO_OP_LISTENER = CommandListener.noOp();
     private static final Context DEFAULT_CONTEXT = Context.with(NO_OP_LISTENER,
-                                                                Strongback.logger(CommandRunner.class.getName()));
+            Strongback.logger(CommandRunner.class.getName()));
 
     private boolean timed = false;
     private long timeoutInMillis;
@@ -83,7 +83,9 @@ final class CommandRunner {
 
     CommandRunner(Context context, CommandRunner next, CommandRunner... commands) {
         // A next and several children is a branch
-        if (commands.length != 0) this.children = commands;
+        if (commands.length != 0) {
+            this.children = commands;
+        }
         this.next = next;
         this.command = null;
         this.context = context != null ? context : DEFAULT_CONTEXT;
@@ -92,7 +94,6 @@ final class CommandRunner {
     /**
      * Steps through all of the state logic for its {@link Command}.
      *
-     * @param timeInMillis the current system time in milliseconds
      * @return {@code true} if this {@link CommandRunner} is ready to be terminated; {@code false} otherwise
      */
     boolean step(long timeInMillis) {
@@ -118,7 +119,9 @@ final class CommandRunner {
             // We are done as long as none of our children are not
             boolean childrenDone = true;
             for (CommandRunner command : children) {
-                if (!command.step(timeInMillis)) childrenDone = false;
+                if (!command.step(timeInMillis)) {
+                    childrenDone = false;
+                }
             }
             return childrenDone;
         }
@@ -141,7 +144,9 @@ final class CommandRunner {
         if (state == CommandState.RUNNING) {
             try {
                 listener().record(command, state);
-                if (command.execute()) state = CommandState.FINISHED;
+                if (command.execute()) {
+                    state = CommandState.FINISHED;
+                }
             } catch (Throwable t) {
                 logger().error(t, "Error while executing " + command.getClass().getName() + " command: " + command);
                 state = CommandState.INTERUPTED;
@@ -188,8 +193,9 @@ final class CommandRunner {
             commandList.add(next);
         }
         if (children != null) {
-            for (CommandRunner command : children)
+            for (CommandRunner command : children) {
                 command.after(commandList);
+            }
         }
     }
 
@@ -206,18 +212,16 @@ final class CommandRunner {
                 runner.cancel();
             }
         }
-        if (next != null) next = null;
+        if (next != null) {
+            next = null;
+        }
     }
 
     @Override
     public String toString() {
-        if (command != null) {
-            return next == null ? command.toString() : command.toString() + " -> " + next;
-        }
+        if (command != null) return next == null ? command.toString() : command.toString() + " -> " + next;
 
-        if (children != null) {
-            return next == null ? Arrays.toString(children) : Arrays.toString(children) + " -> " + next;
-        }
+        if (children != null) return next == null ? Arrays.toString(children) : Arrays.toString(children) + " -> " + next;
 
         return "FORK<" + next.toString() + ">";
     }
@@ -231,9 +235,9 @@ final class CommandRunner {
     }
 
     public boolean isInterruptible() {
-        if (command != null) {
+        if (command != null)
             return command.isInterruptible();
-        } else if (children != null) {
+        else if (children != null) {
             for (CommandRunner runner : children) {
                 if (!runner.isInterruptible()) return false;
             }

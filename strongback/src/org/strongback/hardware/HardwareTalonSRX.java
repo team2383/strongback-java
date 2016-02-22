@@ -41,8 +41,9 @@ import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 class HardwareTalonSRX implements TalonSRX {
 
     protected static interface InputSensor extends Gyroscope {
-        public double rawPositionForAngleInDegrees( double angle );
-        public double angleInDegreesFromRawPosition( double position );
+        public double rawPositionForAngleInDegrees(double angle);
+
+        public double angleInDegreesFromRawPosition(double position);
     }
 
     protected static final InputSensor NO_OP_SENSOR = new InputSensor() {
@@ -56,6 +57,7 @@ class HardwareTalonSRX implements TalonSRX {
         public double getRate() {
             return 0;
         }
+
         @Override
         public InputSensor zero() {
             return this; // do nothing
@@ -80,8 +82,8 @@ class HardwareTalonSRX implements TalonSRX {
         private final double pulsesPerDegree;
         private final double edgesPerPulse;
 
-        protected EncoderInputSensor( DoubleSupplier positionInEdges, DoubleSupplier velocityInEdgesPerCycle,
-            double pulsesPerDegree, int edgesPerPulse, DoubleSupplier cyclesPeriodInSeconds ) {
+        protected EncoderInputSensor(DoubleSupplier positionInEdges, DoubleSupplier velocityInEdgesPerCycle,
+                                     double pulsesPerDegree, int edgesPerPulse, DoubleSupplier cyclesPeriodInSeconds) {
             this.positionInEdges = positionInEdges;
             this.velocityInEdgesPerCycle = velocityInEdgesPerCycle;
             this.cyclePeriodInSeconds = cyclesPeriodInSeconds;
@@ -129,8 +131,9 @@ class HardwareTalonSRX implements TalonSRX {
         private final double analogTurnsPerVolt;
         private final double voltageRange;
 
-        protected AnalogInputSensor( DoubleSupplier analogPosition, DoubleSupplier changeInVoltsPerCycle,
-                double analogRange, double analogTurnsPerVolt, double voltageRange, DoubleSupplier cyclePeriodInSeconds ) {
+        protected AnalogInputSensor(DoubleSupplier analogPosition, DoubleSupplier changeInVoltsPerCycle,
+                                    double analogRange, double analogTurnsPerVolt, double voltageRange,
+                                    DoubleSupplier cyclePeriodInSeconds) {
             this.analogPosition = analogPosition;
             this.changeInVoltsPerCycle = changeInVoltsPerCycle;
             this.cyclePeriodInSeconds = cyclePeriodInSeconds;
@@ -142,7 +145,7 @@ class HardwareTalonSRX implements TalonSRX {
         @Override
         public double rawPositionForAngleInDegrees(double angle) {
             // Units: (0-1023) / 1023 x (turns/volt) x (volts) x (degrees/turn) = degrees
-            // Units: (degrees) x (turns/degrees) x (1/volts) x (volts/turn) * 1023  = (0-1023)
+            // Units: (degrees) x (turns/degrees) x (1/volts) x (volts/turn) * 1023 = (0-1023)
             double relativeInput = angle / 360.0 / voltageRange / analogTurnsPerVolt * analogRange;
             return relativeInput + zero;
         }
@@ -152,6 +155,7 @@ class HardwareTalonSRX implements TalonSRX {
             // Units: (0-1023) / 1023 x (turns/volt) x (volts) x (degrees/turn) = degrees
             return (position - zero) / analogRange * analogTurnsPerVolt * voltageRange * 360.0;
         }
+
         @Override
         public double getAngle() {
             return angleInDegreesFromRawPosition(analogPosition.getAsDouble());
@@ -173,14 +177,16 @@ class HardwareTalonSRX implements TalonSRX {
 
     protected static EncoderInputSensor encoderInput(DoubleSupplier positionInPulses, DoubleSupplier velocityInPulsesPerCycle,
             double pulsesPerDegree, int risesPerPulse, DoubleSupplier cyclePeriodInSeconds) {
-        if ( pulsesPerDegree <= 0.0000001d && pulsesPerDegree >= 0.0000001d ) return null;
-        return new EncoderInputSensor(positionInPulses, velocityInPulsesPerCycle, pulsesPerDegree, risesPerPulse, cyclePeriodInSeconds);
+        if (pulsesPerDegree <= 0.0000001d && pulsesPerDegree >= 0.0000001d) return null;
+        return new EncoderInputSensor(positionInPulses, velocityInPulsesPerCycle, pulsesPerDegree, risesPerPulse,
+                cyclePeriodInSeconds);
     }
 
     protected static AnalogInputSensor analogInput(DoubleSupplier analogPosition, DoubleSupplier changeInVoltsPerCycle,
             double analogRange, double analogTurnsPerVolt, double voltageRange, DoubleSupplier cyclesPeriodInSeconds) {
-        if ( analogTurnsPerVolt <= 0.0000001d && analogTurnsPerVolt >= 0.0000001d ) return null;
-        return new AnalogInputSensor(analogPosition, changeInVoltsPerCycle, analogRange, analogTurnsPerVolt, voltageRange, cyclesPeriodInSeconds);
+        if (analogTurnsPerVolt <= 0.0000001d && analogTurnsPerVolt >= 0.0000001d) return null;
+        return new AnalogInputSensor(analogPosition, changeInVoltsPerCycle, analogRange, analogTurnsPerVolt, voltageRange,
+                cyclesPeriodInSeconds);
     }
 
     private static final double DEFAULT_ANALOG_RATE = 0.100;
@@ -219,27 +225,27 @@ class HardwareTalonSRX implements TalonSRX {
         this.busVoltage = talon::getBusVoltage;
         this.temperature = talon::getTemperature;
         this.encoderInput = encoderInput(talon::getEncPosition,
-                                             talon::getEncVelocity,
-                                             pulsesPerDegree,
-                                             RISES_PER_PULSE,
-                                             () -> quadratureRateInSeconds);
+                talon::getEncVelocity,
+                pulsesPerDegree,
+                RISES_PER_PULSE,
+                () -> quadratureRateInSeconds);
         this.analogInput = analogInput(talon::getAnalogInPosition,
-                                           talon::getAnalogInVelocity,
-                                           MAX_ANALOG_RANGE,
-                                           analogTurnsOverVoltageRange / MAX_ANALOG_VOLTAGE,
-                                           MAX_ANALOG_VOLTAGE,
-                                           () -> analogRateInSeconds);
+                talon::getAnalogInVelocity,
+                MAX_ANALOG_RANGE,
+                analogTurnsOverVoltageRange / MAX_ANALOG_VOLTAGE,
+                MAX_ANALOG_VOLTAGE,
+                () -> analogRateInSeconds);
         this.selectedEncoderInput = encoderInput(talon::getPosition,
-                                             talon::getSpeed,
-                                             pulsesPerDegree,
-                                             RISES_PER_PULSE,
-                                             () -> feedbackRateInSeconds);
+                talon::getSpeed,
+                pulsesPerDegree,
+                RISES_PER_PULSE,
+                () -> feedbackRateInSeconds);
         this.selectedAnalogInput = analogInput(talon::getPosition,
-                                           talon::getSpeed,
-                                           MAX_ANALOG_RANGE,
-                                           analogTurnsOverVoltageRange / MAX_ANALOG_VOLTAGE,
-                                           MAX_ANALOG_VOLTAGE,
-                                           () -> feedbackRateInSeconds);
+                talon::getSpeed,
+                MAX_ANALOG_RANGE,
+                analogTurnsOverVoltageRange / MAX_ANALOG_VOLTAGE,
+                MAX_ANALOG_VOLTAGE,
+                () -> feedbackRateInSeconds);
         this.instantaneousFaults = new Faults() {
             @Override
             public Switch forwardLimitSwitch() {
@@ -356,22 +362,27 @@ class HardwareTalonSRX implements TalonSRX {
     @Override
     public TalonSRX setFeedbackDevice(FeedbackDevice device) {
         talon.setFeedbackDevice(edu.wpi.first.wpilibj.CANTalon.FeedbackDevice.valueOf(device.value()));
-        switch(device) {
+        switch (device) {
             case ANALOG_POTENTIOMETER:
             case ANALOG_ENCODER:
-                if ( selectedAnalogInput != null ) {
+                if (selectedAnalogInput != null) {
                     selectedInput = selectedAnalogInput;
                 } else {
-                    Strongback.logger(getClass()).error("Unable to use the analog input for feedback, since the Talon SRX (device " + getDeviceID() + ") was not instantiated with an analog input. Check how this device was created using Strongback's Hardware class.");
+                    Strongback.logger(getClass())
+                            .error("Unable to use the analog input for feedback, since the Talon SRX (device " + getDeviceID()
+                                    + ") was not instantiated with an analog input. Check how this device was created using Strongback's Hardware class.");
                     selectedInput = NO_OP_SENSOR;
                 }
                 break;
             case QUADRATURE_ENCODER:
             case ENCODER_RISING:
-                if ( selectedEncoderInput != null ) {
+                if (selectedEncoderInput != null) {
                     selectedInput = selectedEncoderInput;
                 } else {
-                    Strongback.logger(getClass()).error("Unable to use the quadrature encoder input for feedback, since the Talon SRX (device " + getDeviceID() + ") was not instantiated with an encoder input. Check how this device was created using Strongback's Hardware class.");
+                    Strongback.logger(getClass())
+                            .error("Unable to use the quadrature encoder input for feedback, since the Talon SRX (device "
+                                    + getDeviceID()
+                                    + ") was not instantiated with an encoder input. Check how this device was created using Strongback's Hardware class.");
                     selectedInput = NO_OP_SENSOR;
                 }
                 break;
@@ -387,7 +398,7 @@ class HardwareTalonSRX implements TalonSRX {
     public TalonSRX setStatusFrameRate(StatusFrameRate frameRate, int periodMillis) {
         talon.setStatusFrameRateMs(edu.wpi.first.wpilibj.CANTalon.StatusFrameRate.valueOf(frameRate.value()), periodMillis);
         double periodInSeconds = periodMillis / 1000.0;
-        switch(frameRate) {
+        switch (frameRate) {
             case FEEDBACK:
                 feedbackRateInSeconds = periodInSeconds;
                 break;

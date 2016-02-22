@@ -28,12 +28,14 @@ public interface ThreeAxisAccelerometer extends TwoAxisAccelerometer {
 
     /**
      * Get the Z-axis accelerometer.
+     *
      * @return the accelerometer for the Z-axis; never null
      */
     public Accelerometer getZDirection();
 
     /**
      * Get the accelerometer for the axis with the given index, where 0 is the X-axis, 1 is the Y-axis, and 2 is the Z-axis.
+     *
      * @return the accelerometer; never null
      * @throws IllegalArgumentException if {@code axis} is invalid
      */
@@ -47,6 +49,7 @@ public interface ThreeAxisAccelerometer extends TwoAxisAccelerometer {
 
     /**
      * Get the instantaneous multidimensional acceleration values for all 3 axes.
+     *
      * @return the acceleration values for 3 axes; never null
      */
     @Override
@@ -57,6 +60,7 @@ public interface ThreeAxisAccelerometer extends TwoAxisAccelerometer {
 
     /**
      * Create a 3-axis accelerometer from the three individual accelerometers.
+     *
      * @param xAxis the accelerometer for the X-axis; may not be null
      * @param yAxis the accelerometer for the Y-axis; may not be null
      * @param zAxis the accelerometer for the Z-axis; may not be null
@@ -84,6 +88,7 @@ public interface ThreeAxisAccelerometer extends TwoAxisAccelerometer {
 
     /**
      * Create a 3-axis accelerometer from a 2-axis accelerometer and a separate accelerometer for the Z-axis.
+     *
      * @param xAndY the 2-axis accelerometer for the X- and Y-axes; may not be null
      * @param zAxis the accelerometer for the Z-axis; may not be null
      * @return the 3-axis accelerometer; never null

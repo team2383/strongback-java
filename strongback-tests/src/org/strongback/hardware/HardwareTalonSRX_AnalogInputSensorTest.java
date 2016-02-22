@@ -29,7 +29,7 @@ public class HardwareTalonSRX_AnalogInputSensorTest {
 
     private double analogPosition = 0.0;
     private double analogVelocity = 0.0; // changes in volts per cycle
-    private double analogRange = 1023;   // 10 bit values
+    private double analogRange = 1023; // 10 bit values
     private double analogTurnsOverVoltageRange = 1;
     private double analogVoltageRange = 3.3;
     private double cyclePeriodInSeconds = 0.1;
@@ -41,11 +41,11 @@ public class HardwareTalonSRX_AnalogInputSensorTest {
 
     protected AnalogInputSensor createSensor() {
         sensor = new AnalogInputSensor(() -> analogPosition,
-                                       () -> analogVelocity,
-                                       analogRange,
-                                       analogTurnsOverVoltageRange / analogVoltageRange,
-                                       analogVoltageRange,
-                                       () -> cyclePeriodInSeconds);
+                () -> analogVelocity,
+                analogRange,
+                analogTurnsOverVoltageRange / analogVoltageRange,
+                analogVoltageRange,
+                () -> cyclePeriodInSeconds);
         return sensor;
     }
 
@@ -62,7 +62,7 @@ public class HardwareTalonSRX_AnalogInputSensorTest {
 
     @Test
     public void shouldReturnZeroWhenMeasuredPositionIsHalfRotationAndVelocityAreZero() {
-        analogPosition = 1024/2 - 1;
+        analogPosition = 1024 / 2 - 1;
         analogTurnsOverVoltageRange = 1;
         createSensor();
         assertThat(sensor.getAngle()).isEqualTo(180.0d, DELTA);
@@ -73,7 +73,7 @@ public class HardwareTalonSRX_AnalogInputSensorTest {
 
     @Test
     public void shouldReturnZeroWhenMeasuredPositionIsOneRotationAndVelocityAreZero() {
-        analogPosition = 1024-1;
+        analogPosition = 1024 - 1;
         analogTurnsOverVoltageRange = 1;
         createSensor();
         assertThat(sensor.getAngle()).isEqualTo(360.0d, DELTA);
@@ -84,7 +84,7 @@ public class HardwareTalonSRX_AnalogInputSensorTest {
 
     @Test
     public void shouldReturnZeroWhenMeasuredPositionIsOneAndOneHalfRotationAndVelocityAreZero() {
-        analogPosition = (int)(1024 * 1.5) - 1;
+        analogPosition = (int) (1024 * 1.5) - 1;
         analogTurnsOverVoltageRange = 1;
         createSensor();
         assertThat(sensor.getAngle()).isEqualTo(540.0d, DELTA);
@@ -95,7 +95,7 @@ public class HardwareTalonSRX_AnalogInputSensorTest {
 
     @Test
     public void shouldReturnZeroWhenMeasuredPositionIsThreeAndOneHalfRotationAndVelocityAreZero() {
-        analogPosition = (int)(1024 * 3.5) - 1;
+        analogPosition = (int) (1024 * 3.5) - 1;
         analogTurnsOverVoltageRange = 1;
         createSensor();
         assertThat(sensor.getAngle()).isEqualTo(1260.0d, DELTA);
@@ -106,7 +106,7 @@ public class HardwareTalonSRX_AnalogInputSensorTest {
 
     @Test
     public void shouldHandleMeasuredPositionAndVelocity() {
-        analogPosition = (int)(1024 * 3.5) - 1;
+        analogPosition = (int) (1024 * 3.5) - 1;
         analogVelocity = 1023; // starts from 0 and does full rotation
         analogTurnsOverVoltageRange = 1;
         createSensor();

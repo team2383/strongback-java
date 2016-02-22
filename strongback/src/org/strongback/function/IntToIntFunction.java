@@ -19,10 +19,10 @@ package org.strongback.function;
 import java.util.function.Function;
 
 /**
- * Represents a function that accepts an integer-valued argument and produces an
- * integer-valued result.  This is the {@code int}-to-{@code int} primitive
- * specialization for {@link Function}.
- * <p>This is a functional interface whose functional method is {@link #applyAsInt(int)}.
+ * Represents a function that accepts an integer-valued argument and produces an integer-valued result. This is the {@code int}
+ * -to-{@code int} primitive specialization for {@link Function}.
+ * <p>
+ * This is a functional interface whose functional method is {@link #applyAsInt(int)}.
  *
  * @see Function
  * @author Randall Hauch

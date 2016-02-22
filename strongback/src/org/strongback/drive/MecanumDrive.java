@@ -50,7 +50,7 @@ public class MecanumDrive implements Stoppable, Requirable {
     public static final double DEFAULT_MINIMUM_SPEED = 0.02;
     public static final double DEFAULT_MAXIMUM_SPEED = 1.0;
     public static final DoubleToDoubleFunction DEFAULT_SPEED_LIMITER = Values.symmetricLimiter(DEFAULT_MINIMUM_SPEED,
-                                                                                               DEFAULT_MAXIMUM_SPEED);
+            DEFAULT_MAXIMUM_SPEED);
 
     private static final double SQRT_OF_TWO = Math.sqrt(2.0);
     private static final int NUMBER_OF_MOTORS = 4;
@@ -96,7 +96,7 @@ public class MecanumDrive implements Stoppable, Requirable {
      *        is used to limit to the range [-1.0,1.0]
      */
     public MecanumDrive(Motor leftFront, Motor leftRear, Motor rightFront, Motor rightRear, AngleSensor gyro,
-            DoubleToDoubleFunction speedLimiter) {
+                        DoubleToDoubleFunction speedLimiter) {
         this.leftFront = leftFront;
         this.leftRear = leftRear;
         this.rightFront = rightFront;
@@ -186,6 +186,7 @@ public class MecanumDrive implements Stoppable, Requirable {
 
     /**
      * Normalize all wheel speeds if the magnitude of any wheel is greater than 1.0.
+     *
      * @param wheelSpeeds the speed of each motor
      */
     protected static void normalize(double wheelSpeeds[]) {
@@ -203,6 +204,7 @@ public class MecanumDrive implements Stoppable, Requirable {
 
     /**
      * Scale all speeds.
+     *
      * @param wheelSpeeds the speed of each motor
      * @param scaleFactor the scale factor to apply to the motor speeds
      */
@@ -214,6 +216,7 @@ public class MecanumDrive implements Stoppable, Requirable {
 
     /**
      * Rotate a vector in Cartesian space.
+     *
      * @param x the x value of the vector
      * @param y the y value of the vector
      * @param angle the angle to rotate

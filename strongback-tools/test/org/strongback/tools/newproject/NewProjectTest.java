@@ -47,7 +47,7 @@ public class NewProjectTest {
         List<String> lines = Files.readAllLines(template.toPath(), StandardCharsets.UTF_8);
         List<String> updated = lines.stream().collect(Collectors.toList());
         if (print) updated.forEach(System.out::println);
-        String content = NewProject.combineAndEscape(updated,"/Users/jsmith/strongback");
+        String content = NewProject.combineAndEscape(updated, "/Users/jsmith/strongback");
         if (print) System.out.println(content);
         assertThat(content.indexOf("STRONGBACK")).isEqualTo(-1);
         // assertThat(content.indexOf(" ")).isEqualTo(-1);

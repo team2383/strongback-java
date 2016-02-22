@@ -38,7 +38,7 @@ import org.strongback.command.Command;
  * @author Randall Hauch
  */
 @ThreadSafe
-public interface EventRecorder extends Executable {
+public interface EventRecorder extends Runnable {
 
     /**
      * Record an event with the given identifier and event information.
@@ -83,7 +83,7 @@ public interface EventRecorder extends Executable {
             }
 
             @Override
-            public void execute(long timeInMillis) {
+            public void run() {
             }
         };
     }

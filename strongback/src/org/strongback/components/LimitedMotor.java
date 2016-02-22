@@ -24,17 +24,17 @@ import org.strongback.util.Values;
  * <p>
  * {@link LimitedMotor} has three possible {@link Position positions}:
  * <ol>
- * <li> {@code HIGH} - the high switch is active</li>
- * <li> {@code LOW} - the low switch is active</li>
- * <li> {@code UNKNOWN} - neither switch is triggered (or both switches are triggered, typically as the result of a problem with
+ * <li>{@code HIGH} - the high switch is active</li>
+ * <li>{@code LOW} - the low switch is active</li>
+ * <li>{@code UNKNOWN} - neither switch is triggered (or both switches are triggered, typically as the result of a problem with
  * the robot hardware)</li>
  * </ol>
  * <p>
  * and three possible {@link Motor.Direction directions}:
  * <ol>
- * <li> {@code FORWARD} - the underlying motor is moving to the high limit</li>
- * <li> {@code REVERSE} - the underlying motor is moving to the low limit</li>
- * <li> {@code STOPPED} - the underlying motor is not moving</li>
+ * <li>{@code FORWARD} - the underlying motor is moving to the high limit</li>
+ * <li>{@code REVERSE} - the underlying motor is moving to the low limit</li>
+ * <li>{@code STOPPED} - the underlying motor is not moving</li>
  * </ol>
  *
  * @author Zach Anderson
