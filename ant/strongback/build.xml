@@ -40,7 +40,7 @@
     <target name="compile" description="Compile the source code.">
         <mkdir dir="${build.dir}" />
         <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false">
-            <classpath refid="compile.classpath" />
+            <classpath path="${strongback.classpath}:${userLibs}"/>
         </javac>
         <copy todir="${build.dir}">
             <fileset dir="${src.dir}" includes="**/*.xml,**/*.properties,**/*.txt,**/*.ico" />
@@ -58,7 +58,7 @@
         <echo>Copying jars from ${strongback.classpath} to ${build.jars}.</echo>
         <copy todir="${build.jars}" flatten="true">
             <path>
-                <pathelement path="${strongback.classpath}" />
+                <pathelement path="${strongback.classpath}:${userLibs}" />
             </path>
         </copy>
 
