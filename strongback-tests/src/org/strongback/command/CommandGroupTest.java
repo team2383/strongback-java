@@ -35,18 +35,16 @@ public class CommandGroupTest {
 
     @Before
     public void beforeEach() {
-        scheduler = new Scheduler(Logger.noOp(), null);
+        scheduler = new Scheduler(Logger.noOp(),null);
         list = new LinkedList<>();
         TestCommand.reset();
         c = new Command[10];
-        for (int i = 0; i < c.length; i++) {
+        for (int i = 0; i < c.length; i++)
             c[i] = new TestCommand(list);
-        }
         DelayCommand.reset();
         d = new Command[10];
-        for (int i = 0; i < d.length; i++) {
+        for (int i = 0; i < d.length; i++)
             d[i] = new DelayCommand(list, i);
-        }
     }
 
     @Test
@@ -57,21 +55,21 @@ public class CommandGroupTest {
 
         assertThat(list).isEmpty();
 
-        scheduler.run();
+        scheduler.execute(0);
 
         assertThat(list).isEqualTo(listOf("C0 init", "C0 exe", "C0 fin", "C1 init", "C1 exe", "C1 fin", "D1 init", "D1 exe"));
         list.clear();
 
-        scheduler.run();
-        assertThat(list).isEqualTo(listOf("D1 exe"));
+        scheduler.execute(1);
+        assertThat(list).isEqualTo(listOf("D1 exe" ));
         list.clear();
 
-        scheduler.run();
-        assertThat(list).isEqualTo(listOf("D1 exe"));
+        scheduler.execute(2);
+        assertThat(list).isEqualTo(listOf( "D1 exe" ));
         list.clear();
 
-        scheduler.run();
-        assertThat(list).isEqualTo(listOf("D1 fin"));
+        scheduler.execute(1000);
+        assertThat(list).isEqualTo(listOf( "D1 fin" ));
         list.clear();
     }
 
@@ -87,8 +85,8 @@ public class CommandGroupTest {
         scheduler.submit(r1);
         scheduler.submit(r2);
 
-        scheduler.run();
-        assertThat(list).isEqualTo(listOf("R0 inter", "R1 init", "R1 exe", "R1 end"));
+        scheduler.execute(0);
+        assertThat(list).isEqualTo(listOf("R0 inter", "R1 init", "R1 exe", "R1 end" ));
         list.clear();
     }
 
@@ -108,16 +106,16 @@ public class CommandGroupTest {
         CommandWithRequirement r3 = new CommandWithRequirement(required, 3, list, false);
         scheduler.submit(g);
 
-        scheduler.run();
-        assertThat(list).isEqualTo(listOf("R0 init", "R0 exe", "R0 end"));
+        scheduler.execute(0);
+        assertThat(list).isEqualTo(listOf("R0 init", "R0 exe", "R0 end" ));
         list.clear();
 
         scheduler.submit(r3);
-        scheduler.run();
-        assertThat(list).isEqualTo(listOf("R1 inter", "R3 init", "R3 exe", "R3 end"));
+        scheduler.execute(1);
+        assertThat(list).isEqualTo(listOf("R1 inter", "R3 init", "R3 exe", "R3 end" ));
         list.clear();
 
-        scheduler.run();
+        scheduler.execute(2);
         assertThat(list).isEmpty();
     }
 
@@ -133,39 +131,39 @@ public class CommandGroupTest {
         // Nothing has executed yet
         assertThat(list).isEmpty();
 
-        // First step should run 0
-        scheduler.run();
-        assertThat(list).isEqualTo(listOf("C0 init", "C0 exe", "C0 fin"));
+        // First step should execute 0
+        scheduler.execute(0);
+        assertThat(list).isEqualTo(listOf("C0 init", "C0 exe", "C0 fin" ));
         list.clear();
 
         // Second step is a branch, nothing was executed, fork was primed
-        scheduler.run();
+        scheduler.execute(1);
         assertThat(list).isEmpty();
 
-        // Third step should run 1 and 2 (parallelized) and 3 (just forked)
-        scheduler.run();
+        // Third step should execute 1 and 2 (parallelized) and 3 (just forked)
+        scheduler.execute(2);
         assertThat(list).isEqualTo(listOf("C1 init", "C1 exe", "C1 fin", "C2 init", "C2 exe", "C2 fin", "C3 init", "C3 exe",
-                "C3 fin"));
+                        "C3 fin" ));
         list.clear();
 
-        // Fourth step should run 5 (main) and 4 (on fork)
-        scheduler.run();
+        // Fourth step should execute 5 (main) and 4 (on fork)
+        scheduler.execute(3);
         assertThat(list)
-                .isEqualTo(listOf("C5 init", "C5 exe", "C5 fin", "C4 init", "C4 exe", "C4 fin"));
+                .isEqualTo(listOf("C5 init", "C5 exe", "C5 fin", "C4 init", "C4 exe", "C4 fin" ));
         list.clear();
 
         // Fifth step is a branch, nothing was executed fork is dead, another fork was primed
-        scheduler.run();
+        scheduler.execute(4);
         assertThat(list).isEmpty();
 
-        // Sixth step should run 6 (main) and 7 (just forked)
-        scheduler.run();
+        // Sixth step should execute 6 (main) and 7 (just forked)
+        scheduler.execute(5);
         assertThat(list)
-                .isEqualTo(listOf("C6 init", "C6 exe", "C6 fin", "C7 init", "C7 exe", "C7 fin"));
+                .isEqualTo(listOf("C6 init", "C6 exe", "C6 fin", "C7 init", "C7 exe", "C7 fin" ));
         list.clear();
 
         // Seventh step scheduler is empty, nothing executes
-        scheduler.run();
+        scheduler.execute(6);
         assertThat(list).isEmpty();
     }
 
@@ -175,18 +173,18 @@ public class CommandGroupTest {
         scheduler.submit(c);
         assertThat(list).isEmpty();
         // First step, C0 should have been added, run, and finished
-        scheduler.run();
-        assertThat(list).isEqualTo(listOf("C0 init", "C0 exe", "C0 fin"));
+        scheduler.execute(0);
+        assertThat(list).isEqualTo(listOf("C0 init", "C0 exe", "C0 fin" ));
 
         // Second step, C1 should have been added, run, and finished
-        scheduler.run();
+        scheduler.execute(0);
         assertThat(list)
-                .isEqualTo(listOf("C0 init", "C0 exe", "C0 fin", "C1 init", "C1 exe", "C1 fin"));
+                .isEqualTo(listOf("C0 init", "C0 exe", "C0 fin", "C1 init", "C1 exe", "C1 fin" ));
 
         // Third step, C2 should have been added, run, and finished
-        scheduler.run();
+        scheduler.execute(0);
         assertThat(list).isEqualTo(listOf("C0 init", "C0 exe", "C0 fin", "C1 init", "C1 exe", "C1 fin", "C2 init", "C2 exe",
-                "C2 fin"));
+                        "C2 fin" ));
     }
 
     private final class SeqCommandGroup extends CommandGroup {
@@ -200,10 +198,10 @@ public class CommandGroupTest {
     public void shouldExecuteCommandsTogether() {
         Command c = new SimulCommandGroup();
         scheduler.submit(c);
-        scheduler.run();
+        scheduler.execute(0);
         // After one step, all three should have run
         assertThat(list).isEqualTo(listOf("C0 init", "C0 exe", "C0 fin", "C1 init", "C1 exe", "C1 fin", "C2 init", "C2 exe",
-                "C2 fin"));
+                        "C2 fin" ));
     }
 
     private final class SimulCommandGroup extends CommandGroup {
@@ -218,14 +216,14 @@ public class CommandGroupTest {
         Command c = new TwoOneGroup();
         scheduler.submit(c);
         // After one step, first two should have run
-        scheduler.run();
+        scheduler.execute(0);
         assertThat(list)
-                .isEqualTo(listOf("C0 init", "C0 exe", "C0 fin", "C1 init", "C1 exe", "C1 fin"));
+                .isEqualTo(listOf("C0 init", "C0 exe", "C0 fin", "C1 init", "C1 exe", "C1 fin" ));
         list.clear();
 
         // After two steps, all three should have run
-        scheduler.run();
-        assertThat(list).isEqualTo(listOf("C2 init", "C2 exe", "C2 fin"));
+        scheduler.execute(0);
+        assertThat(list).isEqualTo(listOf("C2 init", "C2 exe", "C2 fin" ));
     }
 
     private final class TwoOneGroup extends CommandGroup {
@@ -241,39 +239,39 @@ public class CommandGroupTest {
         // Nothing has executed yet
         assertThat(list).isEmpty();
 
-        // First step should run 0
-        scheduler.run();
-        assertThat(list).isEqualTo(listOf("C0 init", "C0 exe", "C0 fin"));
+        // First step should execute 0
+        scheduler.execute(0);
+        assertThat(list).isEqualTo(listOf("C0 init", "C0 exe", "C0 fin" ));
         list.clear();
 
         // Second step is a branch, nothing was executed, fork was primed
-        scheduler.run();
+        scheduler.execute(0);
         assertThat(list).isEmpty();
 
-        // Third step should run 1 and 2 (parallelized) and 3 (just forked)
-        scheduler.run();
+        // Third step should execute 1 and 2 (parallelized) and 3 (just forked)
+        scheduler.execute(0);
         assertThat(list).isEqualTo(listOf("C1 init", "C1 exe", "C1 fin", "C2 init", "C2 exe", "C2 fin", "C3 init", "C3 exe",
-                "C3 fin"));
+                        "C3 fin" ));
         list.clear();
 
-        // Fourth step should run 5 (main) and 4 (on fork)
-        scheduler.run();
+        // Fourth step should execute 5 (main) and 4 (on fork)
+        scheduler.execute(0);
         assertThat(list)
-                .isEqualTo(listOf("C5 init", "C5 exe", "C5 fin", "C4 init", "C4 exe", "C4 fin"));
+                .isEqualTo(listOf("C5 init", "C5 exe", "C5 fin", "C4 init", "C4 exe", "C4 fin" ));
         list.clear();
 
         // Fifth step is a branch, nothing was executed fork is dead, another fork was primed
-        scheduler.run();
+        scheduler.execute(0);
         assertThat(list).isEmpty();
 
-        // Sixth step should run 6 (main) and 7 (just forked)
-        scheduler.run();
+        // Sixth step should execute 6 (main) and 7 (just forked)
+        scheduler.execute(0);
         assertThat(list)
-                .isEqualTo(listOf("C6 init", "C6 exe", "C6 fin", "C7 init", "C7 exe", "C7 fin"));
+                .isEqualTo(listOf("C6 init", "C6 exe", "C6 fin", "C7 init", "C7 exe", "C7 fin" ));
         list.clear();
 
         // Seventh step scheduler is empty, nothing executes
-        scheduler.run();
+        scheduler.execute(0);
         assertThat(list).isEmpty();
     }
 
@@ -291,34 +289,34 @@ public class CommandGroupTest {
         // Nothing has executed yet
         assertThat(list).isEmpty();
 
-        // First step should run 0
-        scheduler.run();
-        assertThat(list).isEqualTo(listOf("C0 init", "C0 exe", "C0 fin"));
+        // First step should execute 0
+        scheduler.execute(0);
+        assertThat(list).isEqualTo(listOf("C0 init", "C0 exe", "C0 fin" ));
         list.clear();
 
         // Second step is a branch, nothing executes, fork is primed
-        scheduler.run();
+        scheduler.execute(0);
         assertThat(list).isEmpty();
 
-        // Third step should run 3 (main) and 1 and 2 (just forked parallelized)
-        scheduler.run();
+        // Third step should execute 3 (main) and 1 and 2 (just forked parallelized)
+        scheduler.execute(0);
         assertThat(list).isEqualTo(listOf("C3 init", "C3 exe", "C3 fin", "C1 init", "C1 exe", "C1 fin", "C2 init", "C2 exe",
-                "C2 fin"));
+                        "C2 fin" ));
         list.clear();
 
-        // Fourth step should run 4 and 5 (parallelized) fork is dead
-        scheduler.run();
+        // Fourth step should execute 4 and 5 (parallelized) fork is dead
+        scheduler.execute(0);
         assertThat(list)
-                .isEqualTo(listOf("C4 init", "C4 exe", "C4 fin", "C5 init", "C5 exe", "C5 fin"));
+                .isEqualTo(listOf("C4 init", "C4 exe", "C4 fin", "C5 init", "C5 exe", "C5 fin" ));
         list.clear();
 
-        // Fifth step should run 6
-        scheduler.run();
-        assertThat(list).isEqualTo(listOf("C6 init", "C6 exe", "C6 fin"));
+        // Fifth step should execute 6
+        scheduler.execute(0);
+        assertThat(list).isEqualTo(listOf("C6 init", "C6 exe", "C6 fin" ));
         list.clear();
 
         // Sixth step scheduler is empty, nothing executed
-        scheduler.run();
+        scheduler.execute(0);
         assertThat(list).isEmpty();
 
     }
@@ -427,9 +425,7 @@ public class CommandGroupTest {
             super(required);
             this.list = list;
             this.number = number;
-            if (!interruptible) {
-                setNotInterruptible();
-            }
+            if (!interruptible) setNotInterruptible();
         }
 
         @Override

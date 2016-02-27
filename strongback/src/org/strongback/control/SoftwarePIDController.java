@@ -16,12 +16,10 @@
 
 package org.strongback.control;
 
-import java.lang.reflect.Executable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
@@ -30,6 +28,8 @@ import java.util.function.Supplier;
 
 import org.strongback.DataRecordable;
 import org.strongback.DataRecorder;
+import org.strongback.Executable;
+import org.strongback.PeriodicExecutor;
 import org.strongback.Strongback;
 import org.strongback.annotation.Immutable;
 import org.strongback.annotation.ThreadSafe;
@@ -50,7 +50,7 @@ import edu.wpi.first.wpilibj.tables.ITableListener;
  * <li>With commands - a controller instance is used within or as a subsystem, and one or more command classes are created to
  * use this by setting the {@link #withTarget(double) setpoint} (and optionally the gains, input and output ranges, and
  * tolerance) and calling {@link #computeOutput()}; or</li>
- * <li>Continuous execution - a controller instance is registered with an {@link Executor} (typically Strongback's
+ * <li>Continuous execution - a controller instance is registered with an {@link PeriodicExecutor} (typically Strongback's
  * {@link Strongback#executor() built-in executor}) to continuously execute and generate the output based upon the input and
  * current setpoint. The setpoint, gains, input and output ranges, and tolerance can all be changed at any time, including.</li>
  * </ol>
@@ -108,7 +108,7 @@ public class SoftwarePIDController implements LiveWindowSendable, PIDController 
     private volatile double prevError = 0.0d;
     private volatile double result = 0.0d;
     private volatile ITable table;
-    private final Runnable runnable = () -> computeOutput();
+    private final Executable executable = timeInMillis -> computeOutput();
     private final ITableListener listener = (table, key, value, isNew) -> SoftwarePIDController.this.valueChanged(table, key,
             value, isNew);
 
@@ -156,12 +156,12 @@ public class SoftwarePIDController implements LiveWindowSendable, PIDController 
      * If this is used, then this same controller should <em>never</em> be used with commands. This is not checked, so robot
      * programs are responsible for ensuring this does not happen.
      *
-     * @return the {@link Executable} object that can be registered with an {@link Executor} (typically Strongback's
+     * @return the {@link Executable} object that can be registered with an {@link PeriodicExecutor} (typically Strongback's
      *         {@link Strongback#executor() central executor}); never null and always the same instance for this controller
      */
     @Override
-    public Runnable runnable() {
-        return runnable;
+    public Executable executable() {
+        return executable;
     }
 
     @Override

@@ -16,9 +16,8 @@
 
 package org.strongback.control;
 
-import java.lang.reflect.Executable;
-import java.util.concurrent.Executor;
-
+import org.strongback.Executable;
+import org.strongback.PeriodicExecutor;
 import org.strongback.Strongback;
 import org.strongback.command.Requirable;
 
@@ -139,20 +138,20 @@ public interface Controller extends Requirable {
      * @return <code>true</code> if the {@link #executable()} does useful work and enables the controller to operate continually
      *         and automatically, or <code>false</code> if the {@link #executable()} does nothing.
      */
-    public default boolean hasRunnable() {
+    public default boolean hasExecutable() {
         return true;
     }
 
     /**
-     * Get the {@link Runnable} instance that will continuously {@link #computeOutput() execute} this controller to read inputs
-     * from the source and generate outputs to reach the {@link #getTarget() target}.
+     * Get the {@link Executable} instance that will continuously {@link #computeOutput() execute} this controller to read
+     * inputs from the source and generate outputs to reach the {@link #getTarget() target}.
      * <p>
      * If this is used, then this same controller should <em>never</em> be used with commands. This is not checked, so robot
      * programs are responsible for ensuring this does not happen.
      *
-     * @return the {@link Runnable} object that can be registered with an {@link Executor} (typically Strongback's
+     * @return the {@link Executable} object that can be registered with an {@link PeriodicExecutor} (typically Strongback's
      *         {@link Strongback#executor() central executor}); never null and always the same instance for this controller
      */
-    public Runnable runnable();
+    public Executable executable();
 
 }

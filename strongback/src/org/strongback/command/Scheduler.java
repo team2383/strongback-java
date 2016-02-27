@@ -16,16 +16,16 @@
 
 package org.strongback.command;
 
+import org.strongback.Executable;
 import org.strongback.Logger;
 import org.strongback.Strongback;
-import org.strongback.components.Clock;
 
 /**
  * The scheduler used to execute {@link Command}s.
  *
  * @see Strongback#submit(Command)
  */
-public class Scheduler implements Runnable {
+public class Scheduler implements Executable {
 
     private static CommandListener NO_OP = (command, state) -> {
     };
@@ -40,7 +40,6 @@ public class Scheduler implements Runnable {
 
     private final Commands commands = new Commands();
     private final CommandRunner.Context context;
-    private final Clock clock = Strongback.timeSystem();
 
     public Scheduler(Logger logger) {
         this(logger, null);
@@ -94,8 +93,7 @@ public class Scheduler implements Runnable {
                     assert commands.length == 1;
                     return new CommandRunner(context, last, new CommandRunner(context, buildRunner(commands[0], null)));
             }
-            // This line should never happen, the switch will throw an exception
-            // first
+            // This line should never happen, the switch will throw an exception first
             throw new IllegalStateException("Unexpected command type: " + cg.getType());
         }
         return new CommandRunner(context, last, command);
@@ -104,10 +102,11 @@ public class Scheduler implements Runnable {
     /**
      * Steps once though all of the {@link Command}s in the {@link Scheduler}.
      *
+     * @param timeInMillis the current system time in milliseconds
      */
     @Override
-    public void run() {
-        commands.step(clock.currentTimeInMillis());
+    public void execute(long timeInMillis) {
+        commands.step(timeInMillis);
     }
 
     /**

@@ -16,15 +16,14 @@
 
 package org.strongback;
 
-import java.lang.reflect.Executable;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 import org.strongback.Strongback.Configurator;
 import org.strongback.annotation.ThreadSafe;
-import org.strongback.components.Clock;
 
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Snapshot;
@@ -32,18 +31,18 @@ import com.codahale.metrics.UniformReservoir;
 
 /**
  * A command that measures the {@link Strongback.Configurator#useExecutionPeriod(long, java.util.concurrent.TimeUnit) execution
- * rate} of the Strongback {@link ExecutableList}. This is purely for test purposes.
+ * rate} of the Strongback {@link Executor}. This is purely for test purposes.
  * <p>
  *
  * @author Randall Hauch
  */
 @ThreadSafe
-public final class ExecutableTimer implements Runnable {
+public final class ExecutableTimer implements Executable {
 
     /**
-     * Measure the timing of the {@link ExecutableList} and print the histogram of timing results to {@link System#out}. The
-     * resulting timer will be {@link ExecutableList#register(Executable) registered} with the Executor, and upon completion
-     * will automatically unregister itself.
+     * Measure the timing of the {@link Executor} and print the histogram of timing results to {@link System#out}. The resulting
+     * timer will be {@link Executor#register(Executable) registered} with the Executor, and upon completion will automatically
+     * unregister itself.
      * <p>
      * This method can be used to print a histogram of {@link Strongback#executor() Strongback's executor}. The following
      * example uses 1000 samples, which corresponds to 5 seconds if the {@link Configurator#useExecutionPeriod(long, TimeUnit)
@@ -60,8 +59,8 @@ public final class ExecutableTimer implements Runnable {
      * @param numberOfSamples the number of samples to measure
      * @return the executable timer
      */
-    public static ExecutableTimer measureTimingAndPrint(Runnables runnables, String desc, int numberOfSamples) {
-        return measureTiming(runnables, numberOfSamples, snapshot -> {
+    public static ExecutableTimer measureTimingAndPrint(Executables executables, String desc, int numberOfSamples) {
+        return measureTiming(executables, numberOfSamples, snapshot -> {
             System.out.println("Execution timing statistics" + (desc != null ? " (" + desc + ")" : ""));
             System.out.println("  Size of histogram:      " + snapshot.getValues().length);
             System.out.println("  Minimum (ms):           " + snapshot.getMin());
@@ -78,15 +77,15 @@ public final class ExecutableTimer implements Runnable {
         });
     }
 
-    public static ExecutableTimer measureTiming(Runnables runnables, int numberOfSamples, Consumer<Snapshot> atCompletion) {
+    public static ExecutableTimer measureTiming(Executables executables, int numberOfSamples, Consumer<Snapshot> atCompletion) {
         ExecutableTimer timer = new ExecutableTimer(numberOfSamples, (theTimer) -> {
-            runnables.unregister(theTimer);
+            executables.unregister(theTimer);
             if (atCompletion != null) {
                 atCompletion.accept(theTimer.getResults());
             }
         });
         // Register the timer with the executor ...
-        runnables.register(timer);
+        executables.register(timer);
         return timer;
     }
 
@@ -110,8 +109,7 @@ public final class ExecutableTimer implements Runnable {
     }
 
     @Override
-    public void run() {
-        long timeInMillis = Clock.system().currentTimeInMillis();
+    public void execute(long timeInMillis) {
         long currentCount = count.getAndIncrement();
         if (currentCount < 0) {
             lastStartTime.set(timeInMillis);

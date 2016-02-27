@@ -5,19 +5,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.strongback.components.Clock;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 
 public interface PeriodicExecutor {
+
     public void start();
 
     public void stop();
 
-    public static PeriodicExecutor roboRIONotifier(long period, TimeUnit unit, Runnables runnables) {
+    public static PeriodicExecutor roboRIONotifier(long period, TimeUnit unit, Clock clock, Executables executables) {
         try {
             return new PeriodicExecutor() {
                 private final double periodInSeconds = unit.toMillis(period) * 1000.0;
-                private final Notifier notifier = new Notifier(runnables::run);
+                private final Notifier notifier = new Notifier(executables.toRunnable(clock));
 
                 @Override
                 public void start() {
@@ -34,13 +37,13 @@ public interface PeriodicExecutor {
         }
     }
 
-    public static PeriodicExecutor executorService(long period, TimeUnit unit, Runnables runnables) {
+    public static PeriodicExecutor executorService(long period, TimeUnit unit, Clock clock, Executables executables) {
         return new PeriodicExecutor() {
             private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
             @Override
             public void start() {
-                executor.scheduleAtFixedRate(runnables::run, 0, period, unit);
+                executor.scheduleAtFixedRate(executables.toRunnable(clock), 0, period, unit);
             }
 
             @Override
@@ -50,7 +53,7 @@ public interface PeriodicExecutor {
         };
     }
 
-    public static PeriodicExecutor waitForDSPacket(Runnables runnables) {
+    public static PeriodicExecutor waitForDSPacket(Clock clock, Executables executables) {
         try {
             return new PeriodicExecutor() {
                 private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -60,7 +63,7 @@ public interface PeriodicExecutor {
                 public void start() {
                     executor.submit(() -> {
                         while (!Thread.interrupted()) {
-                            runnables.run();
+                            executables.execute(clock.currentTimeInMillis());
                             ds.waitForData();
                         }
                     });
@@ -76,24 +79,25 @@ public interface PeriodicExecutor {
         }
     }
 
-    public static PeriodicExecutor roboRIONotifierWithFallback(long period, TimeUnit unit, Runnables runnables) {
+    public static PeriodicExecutor roboRIONotifierWithFallback(long period, TimeUnit unit, Clock clock,
+            Executables executables) {
         PeriodicExecutor executor;
         try {
-            executor = PeriodicExecutor.roboRIONotifier(period, unit, runnables);
+            executor = PeriodicExecutor.roboRIONotifier(period, unit, clock, executables);
         } catch (StrongbackRequirementException e) {
             System.out.println("Failed to create native Notifier executor, falling back to Java implementation");
-            executor = PeriodicExecutor.executorService(period, unit, runnables);
+            executor = PeriodicExecutor.executorService(period, unit, clock, executables);
         }
         return executor;
     }
 
-    public static PeriodicExecutor waitForDSPacketWithFallback(Runnables runnables) {
+    public static PeriodicExecutor waitForDSPacketWithFallback(Clock clock, Executables executables) {
         PeriodicExecutor executor;
         try {
-            executor = PeriodicExecutor.waitForDSPacket(runnables);
+            executor = PeriodicExecutor.waitForDSPacket(clock, executables);
         } catch (StrongbackRequirementException e) {
             System.out.println("Failed to create native Notifier executor, falling back to Java implementation");
-            executor = PeriodicExecutor.executorService(20, TimeUnit.MILLISECONDS, runnables);
+            executor = PeriodicExecutor.executorService(20, TimeUnit.MILLISECONDS, clock, executables);
         }
         return executor;
     }

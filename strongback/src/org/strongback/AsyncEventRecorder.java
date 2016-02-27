@@ -16,7 +16,6 @@
 
 package org.strongback;
 
-import java.lang.reflect.Executable;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -28,7 +27,7 @@ import org.strongback.components.Clock;
 
 /**
  * A thread-safe and lock-free {@link EventRecorder} implementation that records all events to a thread-safe queue and then when
- * {@link #execute() executed} writes all enqueued events in the same order as received. The {@link AsyncEventRecorder} is
+ * {@link #execute(long) executed} writes all enqueued events in the same order as received. The {@link AsyncEventRecorder} is
  * {@link Executable}, and is designed to be {@link Executor#register(Executable) registered} with an {@link Executor} to
  * automatically and periodically write the enqueued events to the given {@link EventWriter}.
  *
@@ -126,8 +125,8 @@ final class AsyncEventRecorder implements EventRecorder {
     }
 
     @Override
-    public void run() {
-        queuedWriter.run();
+    public void execute(long timeInMillis) {
+        queuedWriter.execute(timeInMillis);
     }
 
     @FunctionalInterface
@@ -135,7 +134,7 @@ final class AsyncEventRecorder implements EventRecorder {
         public void write(EventWriter writer);
     }
 
-    protected static final class QueuedWriter implements EventWriter, Runnable {
+    protected static final class QueuedWriter implements EventWriter, Executable {
         private final EventWriter writer;
         private final Queue<Event> queue = new ConcurrentLinkedQueue<>();
         private Event event = null;
@@ -165,7 +164,7 @@ final class AsyncEventRecorder implements EventRecorder {
         }
 
         @Override
-        public void run() {
+        public void execute(long timeInMillis) {
             while ((event = queue.poll()) != null) {
                 event.write(writer);
             }

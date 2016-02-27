@@ -290,14 +290,14 @@ public final class Strongback {
         }
 
         /**
-         * Use the specified execution rate for Strongback's controller {@link Strongback#executor() executor}. The default
+         * Use the specified execution rate for Strongback's constant-period {@link Strongback#executor() executor}. The default
          * execution rate is 5 milliseconds.
          *
-         * @param interval the interval for calling all registered {@link Runnable} s; must be positive
+         * @param interval the interval for calling all registered {@link Executable}s; must be positive
          * @param unit the time unit for the interval; may not be null
          * @return this configurator so that methods can be chained together; never null
          */
-        public Configurator useControllerUpdatePeriod(long period, TimeUnit unit) {
+        public Configurator useExecutionPeriod(long period, TimeUnit unit) {
             if (period <= 0)
                 throw new IllegalArgumentException("The execution interval must be positive");
             if (unit == null)
@@ -375,31 +375,31 @@ public final class Strongback {
     }
 
     /**
-     * Get Strongback's Runnables
+     * Get Strongback's Executables
      *
-     * this must be called in t
+     * ran during driverstation loop
      *
      * @return Strongback's executor; never null
      */
-    public static Runnables runnables() {
-        return INSTANCE.runnables;
+    public static Executables executables() {
+        return INSTANCE.executables;
     }
 
     /**
-     * Get Strongback's Runnables that are used to store Controllers
+     * Get Strongback's Executables that are used to store Controllers
      *
      * these are run in a {@link PeriodicExecutor} with a 5ms default interval.
      * <p>
-     * all {@link Controller} and time sensitive {@link Runnable} instances will be registered by default to this executor
+     * all {@link Controller} and time sensitive {@link Executable} instances will be registered by default to this executor
      * <p>
      * However, care must be taken to prevent overloading the executor. Specifically, the executor must be able to perform all
-     * work for all registered {@link Runnable}s during the {@link Configurator#useControllerExecutionPeriod(long, TimeUnit)
+     * work for all registered {@link Executable}s during the {@link Configurator#useControllerExecutionPeriod(long, TimeUnit)
      * configured execution interval}. If too much work is added, the executor may fall behind.
      *
      * @return Strongback's executor; never null
      */
-    public static Runnables fastRunnables() {
-        return INSTANCE.fastRunnables;
+    public static Executables fastExecutables() {
+        return INSTANCE.fastExecutables;
     }
 
     /**
@@ -580,8 +580,8 @@ public final class Strongback {
     private final Function<String, Logger> loggers;
     private final PeriodicExecutor strictExecutor;
     private final PeriodicExecutor dsPacketExecutor;
-    private final Runnables fastRunnables;
-    private final Runnables runnables;
+    private final Executables fastExecutables;
+    private final Executables executables;
     private final Clock clock;
     private final Scheduler scheduler;
     private final AsyncSwitchReactor switchReactor;
@@ -596,32 +596,32 @@ public final class Strongback {
             start = previousInstance.started.get();
             // Terminates all currently-scheduled commands and stops the executor's thread (if running) ...
             previousInstance.doShutdown();
-            fastRunnables = previousInstance.fastRunnables;
-            runnables = previousInstance.runnables;
+            fastExecutables = previousInstance.fastExecutables;
+            executables = previousInstance.executables;
 
             switchReactor = previousInstance.switchReactor;
-            runnables.unregister(previousInstance.dataRecorderDriver);
-            runnables.unregister(previousInstance.eventRecorder);
-            runnables.unregister(previousInstance.scheduler);
+            executables.unregister(previousInstance.dataRecorderDriver);
+            executables.unregister(previousInstance.eventRecorder);
+            executables.unregister(previousInstance.scheduler);
             dataRecorderChannels = previousInstance.dataRecorderChannels;
         } else {
-            runnables = new Runnables();
-            fastRunnables = new Runnables();
+            executables = new Executables();
+            fastExecutables = new Executables();
             switchReactor = new AsyncSwitchReactor();
-            runnables.register(switchReactor);
+            executables.register(switchReactor);
             dataRecorderChannels = new DataRecorderChannels();
         }
         loggers = config.loggersSupplier.get();
         clock = config.timeSystemSupplier.get();
         // Create a new executor ...
         strictExecutor = PeriodicExecutor.roboRIONotifierWithFallback(config.controllerUpdatePeriodInMilliseconds,
-                TimeUnit.MILLISECONDS, fastRunnables);
-        dsPacketExecutor = PeriodicExecutor.waitForDSPacket(runnables);
+                TimeUnit.MILLISECONDS, clock, fastExecutables);
+        dsPacketExecutor = PeriodicExecutor.waitForDSPacketWithFallback(clock, executables);
 
         // Create a new event recorder ...
         if (config.eventWriterFactory != null) {
             eventRecorder = new AsyncEventRecorder(config.eventWriterFactory.get(), clock);
-            runnables.register(eventRecorder);
+            executables.register(eventRecorder);
         } else
 
         {
@@ -635,11 +635,11 @@ public final class Strongback {
         CommandListener commandListener = config.recordCommandStateChanges ? this::recordCommand
                 : this::recordNoCommands;
         scheduler = new Scheduler(loggers.apply("scheduler"), commandListener);
-        runnables.register(scheduler);
+        executables.register(scheduler);
 
         // Create a new data recorder driver ...
         dataRecorderDriver = new DataRecorderDriver(dataRecorderChannels, config.dataWriterFactory);
-        runnables.register(dataRecorderDriver);
+        executables.register(dataRecorderDriver);
 
         // Start this if the previous was already started ...
         if (previousInstance != null && start)
@@ -710,7 +710,7 @@ public final class Strongback {
 
     private void doShutdown() {
         try {
-            // First stop executing immediately; at this point, no runnables
+            // First stop executing immediately; at this point, no Executables
             // will run ...
             strictExecutor.stop();
         } finally {

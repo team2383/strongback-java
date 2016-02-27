@@ -16,7 +16,6 @@
 
 package org.strongback;
 
-import java.lang.reflect.Executable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -27,40 +26,40 @@ import org.strongback.annotation.ThreadSafe;
 import org.strongback.components.Switch;
 
 /**
- * A threadsafe {@link SwitchReactor} implementation that relies upon being periodically {@link Executable#execute() executed}.
- * This class is carefully written to ensure that all functions are registered atomically even while {@link #execute()} is being
- * called.
+ * A threadsafe {@link SwitchReactor} implementation that relies upon being periodically {@link Executable#execute(long)
+ * executed}. This class is carefully written to ensure that all functions are registered atomically even while
+ * {@link #execute(long)} is being called.
  *
  * @author Randall Hauch
  */
 @ThreadSafe
-final class AsyncSwitchReactor implements Runnable, SwitchReactor {
+final class AsyncSwitchReactor implements Executable, SwitchReactor {
 
     private final ConcurrentMap<Switch, Container> listeners = new ConcurrentHashMap<>();
 
     @Override
-    public void run() {
+    public void execute(long time) {
         listeners.forEach((swtch, container) -> container.notifyListeners(swtch.isTriggered()));
     }
 
     @Override
     public void onTriggered(Switch swtch, Runnable function) {
-        listeners.computeIfAbsent(swtch, (s) -> new Container()).addWhenTriggered(function);
+        listeners.computeIfAbsent(swtch,(s)->new Container()).addWhenTriggered(function);
     }
 
     @Override
     public void onUntriggered(Switch swtch, Runnable function) {
-        listeners.computeIfAbsent(swtch, (s) -> new Container()).addWhenUntriggered(function);
+        listeners.computeIfAbsent(swtch,(s)->new Container()).addWhenUntriggered(function);
     }
 
     @Override
     public void whileTriggered(Switch swtch, Runnable function) {
-        listeners.computeIfAbsent(swtch, (s) -> new Container()).addWhileTriggered(function);
+        listeners.computeIfAbsent(swtch,(s)->new Container()).addWhileTriggered(function);
     }
 
     @Override
     public void whileUntriggered(Switch swtch, Runnable function) {
-        listeners.computeIfAbsent(swtch, (s) -> new Container()).addWhileUntriggered(function);
+        listeners.computeIfAbsent(swtch,(s)->new Container()).addWhileUntriggered(function);
     }
 
     /**
@@ -86,34 +85,32 @@ final class AsyncSwitchReactor implements Runnable, SwitchReactor {
         private final AtomicReference<Listener> whileUntriggered = new AtomicReference<>();
 
         public void notifyListeners(boolean nowTriggered) {
-            notifyAtomicallyWhen(() -> !previouslyTriggered && nowTriggered, whenTriggered);
-            notifyAtomicallyWhen(() -> previouslyTriggered && !nowTriggered, whenUntriggered);
-            notifyAtomicallyWhen(() -> previouslyTriggered && nowTriggered, whileTriggered);
-            notifyAtomicallyWhen(() -> !previouslyTriggered && !nowTriggered, whileUntriggered);
+            notifyAtomicallyWhen(()->!previouslyTriggered && nowTriggered, whenTriggered);
+            notifyAtomicallyWhen(()->previouslyTriggered && !nowTriggered, whenUntriggered);
+            notifyAtomicallyWhen(()->previouslyTriggered && nowTriggered, whileTriggered);
+            notifyAtomicallyWhen(()->!previouslyTriggered && !nowTriggered, whileUntriggered);
             previouslyTriggered = nowTriggered;
         }
 
-        private void notifyAtomicallyWhen(BooleanSupplier criteria, AtomicReference<Listener> listenerRef) {
+        private void notifyAtomicallyWhen(BooleanSupplier criteria, AtomicReference<Listener> listenerRef ) {
             Listener listener = listenerRef.get();
-            if (listener != null && criteria.getAsBoolean()) {
-                listener.fire();
-            }
+            if ( listener != null && criteria.getAsBoolean() ) listener.fire();
         }
 
         public void addWhenTriggered(Runnable function) {
-            whenTriggered.updateAndGet((existing) -> new Listener(function, existing));
+            whenTriggered.updateAndGet((existing)->new Listener(function,existing));
         }
 
         public void addWhenUntriggered(Runnable function) {
-            whenUntriggered.updateAndGet((existing) -> new Listener(function, existing));
+            whenUntriggered.updateAndGet((existing)->new Listener(function,existing));
         }
 
         public void addWhileTriggered(Runnable function) {
-            whileTriggered.updateAndGet((existing) -> new Listener(function, existing));
+            whileTriggered.updateAndGet((existing)->new Listener(function,existing));
         }
 
         public void addWhileUntriggered(Runnable function) {
-            whileUntriggered.updateAndGet((existing) -> new Listener(function, existing));
+            whileUntriggered.updateAndGet((existing)->new Listener(function,existing));
         }
     }
 
@@ -134,9 +131,7 @@ final class AsyncSwitchReactor implements Runnable, SwitchReactor {
 
         public void fire() {
             function.run();
-            if (next != null) {
-                next.fire();
-            }
+            if (next != null) next.fire();
         }
     }
 }

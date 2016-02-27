@@ -41,39 +41,35 @@ final class MappedFileDataWriter implements DataWriter {
     private final MappedByteBuffer buffer;
 
     @SuppressWarnings("resource")
-    protected MappedFileDataWriter(String filename, long size) throws IOException {
+    protected MappedFileDataWriter( String filename, long size ) throws IOException {
         outFile = new File(filename);
         channel = new RandomAccessFile(outFile, "rw").getChannel();
         buffer = channel.map(MapMode.READ_WRITE, 0, size);
     }
 
-    @Override
-    public void write(Object object) {
-        this.write(object.toString());
-    }
-
-    public void write(String str) {
+    public void write( String str ) {
         buffer.putInt(str.length());
         buffer.put(str.getBytes(UTF8));
     }
 
-    public void write(int number) {
+    public void write( int number ) {
         buffer.putInt(number);
     }
 
-    public void write(long number) {
+    @Override
+    public void write( long number ) {
         buffer.putLong(number);
     }
 
-    public void write(short number) {
+    public void write( short number ) {
         buffer.putShort(number);
     }
 
-    public void write(float number) {
+    public void write( float number ) {
         buffer.putFloat(number);
     }
 
-    public void write(double number) {
+    public void write( double number ) {
         buffer.putDouble(number);
     }
 
@@ -91,11 +87,11 @@ final class MappedFileDataWriter implements DataWriter {
                 // And always force the buffer ...
                 buffer.force();
             } finally {
-                try {
+                try{
                     // And always close the channel ...
                     channel.close();
                 } catch (IOException e) {
-                    throw new RuntimeException("Failed to close channel", e);
+                    throw new RuntimeException("Failed to close channel",e);
                 }
             }
         }

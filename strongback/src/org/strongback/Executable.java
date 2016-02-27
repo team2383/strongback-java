@@ -16,24 +16,28 @@
 
 package org.strongback;
 
+import java.util.concurrent.Executor;
+
+import org.strongback.components.Clock;
+
 /**
- * A writer used to periodically write data.
+ * Something that can be executed by an {@link Executor}.
  *
  * @author Randall Hauch
- * @see Strongback.Configurator#recordDataTo(java.util.function.Function)
+ * @see Executor
  */
-public interface DataWriter extends AutoCloseable {
-
+@FunctionalInterface
+public interface Executable {
     /**
-     * Writes the current status of the data channels.
+     * Perform an execution at a given moment within the robot match.
      *
-     * @param time the current time in milliseconds
+     * @param timeInMillis the time in the match (in milliseconds) when this execution is being called
      */
-    public void write(long time);
+    public void execute(long timeInMillis);
 
-    /**
-     * Frees the resources used by this {@link DataWriter}.
-     */
-    @Override
-    public void close();
+    public default Runnable toRunnable(Clock clock) {
+        return () -> {
+            this.execute(clock.currentTimeInMillis());
+        };
+    }
 }
