@@ -552,4 +552,8 @@ class HardwareTalonSRX implements TalonSRX {
     public boolean isAlive() {
         return talon.isAlive();
     }
+
+    public CANTalon getWPILibCANTalon() {
+        return talon;
+    }
 }

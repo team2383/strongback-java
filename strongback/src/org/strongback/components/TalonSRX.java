@@ -41,19 +41,6 @@ public interface TalonSRX extends LimitedMotor {
     public int getDeviceID();
 
     /**
-     * <b>Deprecated.</b> Use {@link #getEncoderInput()} instead.
-     * <p>
-     * Get the angle sensor (encoder) hooked up to the Talon SRX motor controller.
-     *
-     * @return the angle sensor; never null, but if not hooked up the sensor will always return a meaningless value
-     * @deprecated Use {@link #getEncoderInput()} instead.
-     */
-    @Deprecated
-    public default AngleSensor getAngleSensor() {
-        return getEncoderInput();
-    }
-
-    /**
      * Get the current encoder angle and rate, regardless of whether it is the current feedback device.
      *
      * @return the gyroscope that reads the encoder sensor; or null if the motor was created with no quadrature encoder input
@@ -333,9 +320,7 @@ public interface TalonSRX extends LimitedMotor {
 
         public static FeedbackDevice valueOf(int value) {
             for (FeedbackDevice mode : values()) {
-                if (mode.value == value) {
-                    return mode;
-                }
+                if (mode.value == value) return mode;
             }
             return null;
         }
@@ -416,9 +401,7 @@ public interface TalonSRX extends LimitedMotor {
 
         public static StatusFrameRate valueOf(int value) {
             for (StatusFrameRate mode : values()) {
-                if (mode.value == value) {
-                    return mode;
-                }
+                if (mode.value == value) return mode;
             }
             return null;
         }
