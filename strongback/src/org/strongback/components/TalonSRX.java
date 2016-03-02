@@ -18,6 +18,8 @@ package org.strongback.components;
 
 import org.strongback.annotation.Experimental;
 
+import edu.wpi.first.wpilibj.CANTalon;
+
 /**
  * A motor controlled by a Talon SRX with built-in current sensor, position (angle) sensor, and optional external limit switches
  * wired into the SRX so that it can automatically stop the forward and reverse directions when the limit switches are
@@ -283,6 +285,13 @@ public interface TalonSRX extends LimitedMotor {
      * @return <code>true</code> if the controller is alive, or <code>false</code> if it has been disabled after expiring.
      */
     public boolean isAlive();
+
+    /**
+     * Get WPILib CANTalon
+     *
+     * @return CANTalon
+     */
+    public CANTalon getWPILibCANTalon();
 
     /**
      * The type of feedback sensor used by this Talon controller.

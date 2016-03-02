@@ -23,6 +23,8 @@ import org.strongback.components.TalonSRX;
 import org.strongback.components.TemperatureSensor;
 import org.strongback.components.VoltageSensor;
 
+import edu.wpi.first.wpilibj.CANTalon;
+
 public class MockTalonSRX extends MockMotor implements TalonSRX {
 
     private static final Gyroscope NO_OP_GYRO = new MockGyroscope();
@@ -225,9 +227,16 @@ public class MockTalonSRX extends MockMotor implements TalonSRX {
         return alive;
     }
 
+    @Override
+    public CANTalon getWPILibCANTalon() {
+        return null;
+    }
+
     public MockTalonSRX setAlive(boolean alive) {
         this.alive = alive;
-        if (!alive) stop();
+        if (!alive) {
+            stop();
+        }
         return this;
     }
 
