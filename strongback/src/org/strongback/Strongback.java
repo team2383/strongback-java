@@ -19,8 +19,10 @@ package org.strongback;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
+import java.util.function.LongConsumer;
 import java.util.function.Supplier;
 
 import org.strongback.AsyncEventRecorder.EventWriter;
@@ -77,7 +79,8 @@ public final class Strongback {
         private String dataRecorderFilenameRoot = "strongback";
         private String eventRecorderFilenameRoot = "strongback";
 
-        private long controllerUpdatePeriodInMilliseconds = 5;
+        private long executionPeriodInMilliseconds = 5;
+        public long driverstationExecutorTimeoutInMilliseconds = 50;
 
         private int estimatedRecordDurationInSeconds = 180; // 3 minutes by
                                                             // default
@@ -86,6 +89,7 @@ public final class Strongback {
         private boolean recordCommandStateChanges = true;
         private Function<Iterable<DataRecorderChannel>, DataWriter> dataWriterFactory = this::createFileDataWriter;
         private Supplier<EventWriter> eventWriterFactory = this::createFileEventWriter;
+        private final LongConsumer excessiveExecutorDelayHandler = null;
         private final Supplier<String> dataRecorderFilenameGenerator = new Supplier<String>() {
             private final Counter counter = Counter.unlimited(1);
 
@@ -304,7 +308,7 @@ public final class Strongback {
                 throw new IllegalArgumentException("The time unit may not be null");
             if (1 > unit.toMillis(period))
                 throw new IllegalArgumentException("The interval must be at least 1 millisecond");
-            controllerUpdatePeriodInMilliseconds = unit.toMillis(period);
+            executionPeriodInMilliseconds = unit.toMillis(period);
             return this;
         }
 
@@ -399,7 +403,7 @@ public final class Strongback {
      * @return Strongback's executor; never null
      */
     public static Executables fastExecutables() {
-        return INSTANCE.fastExecutables;
+        return INSTANCE.strictExecutables;
     }
 
     /**
@@ -580,7 +584,7 @@ public final class Strongback {
     private final Function<String, Logger> loggers;
     private final PeriodicExecutor strictExecutor;
     private final PeriodicExecutor dsPacketExecutor;
-    private final Executables fastExecutables;
+    private final Executables strictExecutables;
     private final Executables executables;
     private final Clock clock;
     private final Scheduler scheduler;
@@ -588,6 +592,8 @@ public final class Strongback {
     private final DataRecorderChannels dataRecorderChannels;
     private final DataRecorderDriver dataRecorderDriver;
     private final EventRecorder eventRecorder;
+    private final AtomicLong executorDelayCounter = new AtomicLong();
+    private final LongConsumer excessiveExecutionHandler;
     private final AtomicBoolean started = new AtomicBoolean(false);
 
     private Strongback(Configurator config, Strongback previousInstance) {
@@ -596,27 +602,37 @@ public final class Strongback {
             start = previousInstance.started.get();
             // Terminates all currently-scheduled commands and stops the executor's thread (if running) ...
             previousInstance.doShutdown();
-            fastExecutables = previousInstance.fastExecutables;
+            strictExecutables = previousInstance.strictExecutables;
             executables = previousInstance.executables;
-
             switchReactor = previousInstance.switchReactor;
+
             executables.unregister(previousInstance.dataRecorderDriver);
             executables.unregister(previousInstance.eventRecorder);
             executables.unregister(previousInstance.scheduler);
             dataRecorderChannels = previousInstance.dataRecorderChannels;
+            excessiveExecutionHandler = previousInstance.excessiveExecutionHandler;
         } else {
             executables = new Executables();
-            fastExecutables = new Executables();
+            strictExecutables = new Executables();
             switchReactor = new AsyncSwitchReactor();
             executables.register(switchReactor);
             dataRecorderChannels = new DataRecorderChannels();
+            excessiveExecutionHandler = config.excessiveExecutorDelayHandler;
         }
         loggers = config.loggersSupplier.get();
         clock = config.timeSystemSupplier.get();
         // Create a new executor ...
-        strictExecutor = PeriodicExecutor.roboRIONotifierWithFallback(config.controllerUpdatePeriodInMilliseconds,
-                TimeUnit.MILLISECONDS, clock, fastExecutables);
-        dsPacketExecutor = PeriodicExecutor.waitForDSPacketWithFallback(clock, executables);
+        strictExecutor = PeriodicExecutor
+                .roboRIONotifierWithFallback("strictExecutor",
+                        config.executionPeriodInMilliseconds, TimeUnit.MILLISECONDS,
+                        strictExecutables, clock, loggers.apply("strictExecutor"),
+                        monitorDelay("dsPacketExecutor", config.executionPeriodInMilliseconds, TimeUnit.MILLISECONDS));
+
+        dsPacketExecutor = PeriodicExecutor.waitForDSPacketWithFallback("dsPacketExecutor",
+                config.driverstationExecutorTimeoutInMilliseconds, TimeUnit.MILLISECONDS, executables, clock,
+                loggers.apply("dsPacketExecutor"),
+                // driverstation packet interval is ~50hz, so 25ms notification on it.
+                monitorDelay("dsPacketExecutor", 25, TimeUnit.MILLISECONDS));
 
         // Create a new event recorder ...
         if (config.eventWriterFactory != null) {
@@ -648,6 +664,26 @@ public final class Strongback {
             doStart();
         }
 
+    }
+
+    private LongConsumer monitorDelay(String executorName, long executionInterval, TimeUnit unit) {
+        long intervalInMs = unit.toMillis(executionInterval);
+        return delayInMs -> {
+            if (delayInMs > intervalInMs) {
+                executorDelayCounter.incrementAndGet();
+                if (excessiveExecutionHandler != null) {
+                    try {
+                        excessiveExecutionHandler.accept(delayInMs);
+                    } catch (Throwable t) {
+                        logger().error(t,
+                                "Error with custom handler for excessive execution times for executor " + executorName + ".");
+                    }
+                } else {
+                    logger().error("Unable to execute all activities within " + intervalInMs + " milliseconds for "
+                            + executorName + "!");
+                }
+            }
+        };
     }
 
     private void recordCommand(Command command, CommandState state) {

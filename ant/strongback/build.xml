@@ -16,7 +16,8 @@
     <path id="compile.classpath">
         <fileset dir="${strongback.home}/java/lib" includes="**/*.jar" excludes="**/*-sources.jar" />
         <fileset dir="${user.home}/wpilib/java/${version}/lib" includes="**/*.jar" excludes="**/*-sources.jar" />
-        <pathelement path="${classpath}" />
+    	<pathelement path="${userLibs}" />
+    	<pathelement path="${classpath}" />
     </path>
 
     <!-- Define a classpath for unit testing -->
@@ -58,7 +59,7 @@
         <echo>Copying jars from '${strongback.classpath}' to '${build.jars}'.</echo>
         <copy todir="${build.jars}" flatten="true">
             <path>
-                <pathelement path="${strongback.classpath}" />
+                <pathelement path="${strongback.classpath}:${userLibs}" />
             </path>
         </copy>
 
