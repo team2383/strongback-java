@@ -626,13 +626,12 @@ public final class Strongback {
                 .roboRIONotifierWithFallback("strictExecutor",
                         config.executionPeriodInMilliseconds, TimeUnit.MILLISECONDS,
                         strictExecutables, clock, loggers.apply("strictExecutor"),
-                        monitorDelay("dsPacketExecutor", config.executionPeriodInMilliseconds, TimeUnit.MILLISECONDS));
+                        monitorDelay("strictExecutor", config.executionPeriodInMilliseconds + 5, TimeUnit.MILLISECONDS));
 
         dsPacketExecutor = PeriodicExecutor.waitForDSPacketWithFallback("dsPacketExecutor",
                 config.driverstationExecutorTimeoutInMilliseconds, TimeUnit.MILLISECONDS, executables, clock,
                 loggers.apply("dsPacketExecutor"),
-                // driverstation packet interval is ~50hz, so 25ms notification on it.
-                monitorDelay("dsPacketExecutor", 25, TimeUnit.MILLISECONDS));
+                monitorDelay("dsPacketExecutor", 60, TimeUnit.MILLISECONDS));
 
         // Create a new event recorder ...
         if (config.eventWriterFactory != null) {
@@ -679,7 +678,8 @@ public final class Strongback {
                                 "Error with custom handler for excessive execution times for executor " + executorName + ".");
                     }
                 } else {
-                    logger().error("Unable to execute all activities within " + intervalInMs + " milliseconds for "
+                    logger().error("Delay is : " + delayInMs + ". Unable to execute all activities within " + intervalInMs
+                            + " milliseconds for "
                             + executorName + "!");
                 }
             }

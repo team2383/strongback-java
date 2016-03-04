@@ -65,6 +65,12 @@
         </antcall>
     </target>
 
+	<target name="jar-dev" depends="deps" description="Creates the JARs without running tests">
+        <antcall target="strongback.all">
+            <param name="dependency.target" value="jar-dev"/>
+        </antcall>
+    </target>
+
     <target name="javadoc">
         <mkdir dir="build"/>
         <javadoc destdir="build/javadoc"
@@ -100,6 +106,47 @@
             <link href="http://docs.oracle.com/javase/8/docs/api/"/>
             <link offline="true" href="http://first.wpi.edu/FRC/roborio/release/docs/java/" packagelistLoc="${wpilib.dir}/java/current/javadoc"/>
         </javadoc>
+    </target>
+	
+	<target name="dist-dev" depends="clean, jar-dev" description="Creates the distribution">
+        <echo>Building Strongback development version ${strongback.version}</echo>
+        <echo>for the WPILib version ${wpilib.version} installed at ${wpilib.dir}</echo>
+        <mkdir dir="build"/>
+
+        <!-- Update the strongback.properties file -->
+        <copy file="strongback.properties" tofile="${build.dir}/strongback.properties"/>
+        <propertyfile file="${build.dir}/strongback.properties">
+            <entry key="strongback.version" value="${strongback.version}"/>
+            <entry key="build.date" value="${current.date}"/>
+        </propertyfile>
+
+        <!-- Build the TAR file, which should maintain file permissions -->
+        <tar destfile="${build.dir}/strongback-${strongback.version}.tar">
+            <tarfileset dir="strongback-tools/scripts" prefix="strongback/java/bin" filemode="755"/>
+            <tarfileset dir="strongback/build" includes="*.jar" prefix="strongback/java/lib"/>
+            <tarfileset dir="libs" includes="*.jar" prefix="strongback/java/lib"/>
+            <tarfileset dir="strongback-testing/build" includes="*.jar" prefix="strongback/java/lib-tests"/>
+            <tarfileset dir="libs/test" includes="*.jar" prefix="strongback/java/lib-tests"/>
+            <tarfileset dir="strongback-tools/build" includes="*.jar" prefix="strongback/java/lib-tools"/>
+            <tarfileset dir="ant/strongback" includes="**" prefix="strongback/java/ant"/>
+            <tarfileset dir="templates" includes="**" prefix="strongback/java/templates"/>
+            <tarfileset dir="build" includes="strongback.properties" prefix="strongback"/>
+            <tarfileset dir="." includes="COPYRIGHT.txt" prefix="strongback"/>
+            <tarfileset dir="." includes="LICENSE.txt" prefix="strongback"/>
+            <tarfileset dir="." includes="README.md" prefix="strongback"/>
+            <tarfileset dir="." includes="CONTRIBUTORS.txt" prefix="strongback"/>
+        </tar>
+
+        <!-- Build the ZIP file (which may not maintain file permissions) -->
+        <zip destfile="${build.dir}/strongback-${strongback.version}.zip">
+            <tarfileset src="${build.dir}/strongback-${strongback.version}.tar"/>
+        </zip>
+
+        <delete dir="${user.home}/strongback"/>
+        <unzip src="${build.dir}/strongback-${strongback.version}.zip" dest="${user.home}"></unzip>
+
+        <gzip destfile="${build.dir}/strongback-${strongback.version}.tar.gz" src="${build.dir}/strongback-${strongback.version}.tar"/>
+        <delete file="${build.dir}/strongback-${strongback.version}.tar" />
     </target>
 
     <target name="dist" depends="clean, jar, javadoc" description="Creates the distribution">

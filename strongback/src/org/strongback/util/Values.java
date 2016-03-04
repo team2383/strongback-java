@@ -76,11 +76,11 @@ public final class Values {
     public static int fuzzyCompare(double a, double b, double tolerance) {
         if (tolerance < 0.0) throw new IllegalArgumentException("The tolerance may not be negative");
         double difference = a - b;
-        return (Math.abs(difference) <= tolerance ? 0
+        return Math.abs(difference) <= tolerance ? 0
                 : // the two values are within the tolerance of each other
-                (difference > 0 ? 1
+                difference > 0 ? 1
                         : // the first is greater than the second
-                        -1)); // the first is less than the second
+                        -1; // the first is less than the second
     }
 
     /**
@@ -95,12 +95,8 @@ public final class Values {
     public static double limit(double minimum, double num, double maximum) {
         if (maximum < minimum) throw new IllegalArgumentException(
                 "The minimum value must be less than or equal to the maximum value");
-        if (num > maximum) {
-            return maximum;
-        }
-        if (num < minimum) {
-            return minimum;
-        }
+        if (num > maximum) return maximum;
+        if (num < minimum) return minimum;
         return num;
     }
 
@@ -116,17 +112,10 @@ public final class Values {
     public static DoubleToDoubleFunction limiter(double minimum, double maximum) {
         if (maximum < minimum) throw new IllegalArgumentException(
                 "The minimum value must be less than or equal to the maximum value");
-        return new DoubleToDoubleFunction() {
-            @Override
-            public double applyAsDouble(double value) {
-                if (value > maximum) {
-                    return maximum;
-                }
-                if (value < minimum) {
-                    return minimum;
-                }
-                return value;
-            }
+        return value -> {
+            if (value > maximum) return maximum;
+            if (value < minimum) return minimum;
+            return value;
         };
     }
 
@@ -145,13 +134,9 @@ public final class Values {
         if (maximum < 0) throw new IllegalArgumentException("The maximum value may not be negative");
         if (maximum < minimum) throw new IllegalArgumentException(
                 "The minimum value must be less than or equal to the maximum value");
-        if (num > maximum) {
-            return maximum;
-        }
+        if (num > maximum) return maximum;
         double positiveNum = Math.abs(num);
-        if (positiveNum > maximum) {
-            return -maximum;
-        }
+        if (positiveNum > maximum) return -maximum;
         return positiveNum > minimum ? num : 0.0;
     }
 
@@ -168,18 +153,11 @@ public final class Values {
         if (maximum < 0) throw new IllegalArgumentException("The maximum value may not be negative");
         if (maximum < minimum) throw new IllegalArgumentException(
                 "The minimum value must be less than or equal to the maximum value");
-        return new DoubleToDoubleFunction() {
-            @Override
-            public double applyAsDouble(double num) {
-                if (num > maximum) {
-                    return maximum;
-                }
-                double positiveNum = Math.abs(num);
-                if (positiveNum > maximum) {
-                    return -maximum;
-                }
-                return positiveNum > minimum ? num : 0.0;
-            }
+        return num -> {
+            if (num > maximum) return maximum;
+            double positiveNum = Math.abs(num);
+            if (positiveNum > maximum) return -maximum;
+            return positiveNum > minimum ? num : 0.0;
         };
     }
 
@@ -228,18 +206,8 @@ public final class Values {
     public static DoubleToDoubleFunction mapRange(double minInputValue, double maxInputValue, double minOutputValue,
             double maxOutputValue) {
         double factor = (maxOutputValue - minOutputValue) / (maxInputValue - minInputValue);
-        return new DoubleToDoubleFunction() {
-            @Override
-            public double applyAsDouble(double num) {
-                if (num <= minInputValue) return minOutputValue;
-                if (num >= maxInputValue) return maxOutputValue;
-                double output = minOutputValue + ((num - minInputValue) * factor);
-                if (output < minOutputValue)
-                    output = minOutputValue;
-                else if (output > maxOutputValue) output = maxOutputValue;
-                return output;
-            }
-        };
+        return num -> (num - minInputValue) * (maxOutputValue - minOutputValue) / (maxInputValue - minInputValue)
+                + minOutputValue;
     }
 
 }

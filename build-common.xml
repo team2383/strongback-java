@@ -127,6 +127,13 @@
         <jar destfile="${project.build.dir}/${project.jar.name}" basedir="${project.output.dir}"/>
         <jar destfile="${project.build.dir}/${project.source.jar.name}" basedir="${project.source.dir}"/>
     </target>
+	
+    <!-- Override the several targets that will need to use the extra library JARs. -->
+    <target name="jar-dev" depends="compile" description="Build and collect the JARs necessary for the robot">
+        <mkdir dir="${project.build.dir}" />
+        <jar destfile="${project.build.dir}/${project.jar.name}" basedir="${project.output.dir}"/>
+        <jar destfile="${project.build.dir}/${project.source.jar.name}" basedir="${project.source.dir}"/>
+    </target>
 
     <target name="dist.dependencies">
         <antcall target="depend.${ant.project.name}"/>

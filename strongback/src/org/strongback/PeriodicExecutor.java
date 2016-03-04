@@ -42,16 +42,10 @@ public abstract class PeriodicExecutor implements Stoppable {
     protected void run() {
         timeInMillis = clock.currentTimeInMillis();
         delayInformer.accept(lastTimeInMillis != 0 ? timeInMillis - lastTimeInMillis : 0);
-        for (Executable executable : executables) {
-            if (Thread.interrupted()) {
-                lastTimeInMillis = 0;
-                return; // stop if we get interrupted
-            }
-            try {
-                executable.execute(timeInMillis);
-            } catch (Throwable e) {
-                logger.error("Error in notifier " + name + ": " + e);
-            }
+        try {
+            executables.forEach((e) -> e.execute(timeInMillis));
+        } catch (Throwable e) {
+            logger.error(e, "Error in notifier :" + name);
         }
         lastTimeInMillis = timeInMillis;
     }
