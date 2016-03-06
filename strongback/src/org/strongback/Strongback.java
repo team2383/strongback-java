@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.LongConsumer;
 import java.util.function.Supplier;
@@ -309,6 +310,52 @@ public final class Strongback {
             if (1 > unit.toMillis(period))
                 throw new IllegalArgumentException("The interval must be at least 1 millisecond");
             executionPeriodInMilliseconds = unit.toMillis(period);
+            return this;
+        }
+
+        /**
+         * When the supplied condition is {@code true}, call the supplied function with this Configurator.
+         * @param condition the condition that determines whether the supplied function should be called; may not be null
+         * @param configure the function that will perform additional configuration
+         * @return this configurator so that methods can be chained together; never null
+         */
+        public Configurator when( boolean condition, Runnable configure ) {
+            return when(()->condition,configure);
+        }
+
+        /**
+         * When the supplied condition is {@code true}, call the supplied function with this Configurator.
+         * @param condition the function that determines whether the supplied function should be called; may not be null
+         * @param configure the function that will perform additional configuration
+         * @return this configurator so that methods can be chained together; never null
+         */
+        public Configurator when( BooleanSupplier condition, Runnable configure ) {
+            if ( condition != null && configure != null && condition.getAsBoolean() ) {
+                configure.run();
+            }
+            return this;
+        }
+
+        /**
+         * When the supplied condition is {@code true}, call the supplied function with this Configurator.
+         * @param condition the condition that determines whether the supplied function should be called; may not be null
+         * @param configure the function that will perform additional configuration
+         * @return this configurator so that methods can be chained together; never null
+         */
+        public Configurator when( boolean condition, Consumer<Configurator> configure ) {
+            return when(()->condition,configure);
+        }
+
+        /**
+         * When the supplied condition is {@code true}, call the supplied function with this Configurator.
+         * @param condition the function that determines whether the supplied function should be called; may not be null
+         * @param configure the function that will perform additional configuration
+         * @return this configurator so that methods can be chained together; never null
+         */
+        public Configurator when( BooleanSupplier condition, Consumer<Configurator> configure ) {
+            if ( condition != null && configure != null && condition.getAsBoolean() ) {
+                configure.accept(this);
+            }
             return this;
         }
 
