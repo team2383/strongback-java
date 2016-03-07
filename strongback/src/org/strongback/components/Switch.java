@@ -55,27 +55,62 @@ public interface Switch {
 
     /**
      * Return a new switch that is only triggered when <em>both</em> switches are triggered.
+     *
      * @param switch1 the first switch; may not be null
      * @param switch2 the second switch; may not be null
      * @return the logical AND of the two switches; never null
      */
-    public static Switch and( Switch switch1, Switch switch2 ) {
-        Objects.requireNonNull(switch1,"The first switch may not be null");
-        Objects.requireNonNull(switch2,"The second switch may not be null");
-        if ( switch1 == switch2 ) return switch1;
-        return ()->switch1.isTriggered() && switch2.isTriggered();
+    public static Switch and(Switch switch1, Switch switch2) {
+        Objects.requireNonNull(switch1, "The first switch may not be null");
+        Objects.requireNonNull(switch2, "The second switch may not be null");
+        if (switch1 == switch2) return switch1;
+        return () -> switch1.isTriggered() && switch2.isTriggered();
     }
 
     /**
      * Return a new switch that is only triggered when <em>either</em> switch is triggered.
+     *
      * @param switch1 the first switch; may not be null
      * @param switch2 the second switch; may not be null
      * @return the logical OR of the two switches; never null
      */
-    public static Switch or( Switch switch1, Switch switch2 ) {
-        Objects.requireNonNull(switch1,"The first switch may not be null");
-        Objects.requireNonNull(switch2,"The second switch may not be null");
-        if ( switch1 == switch2 ) return switch1;
-        return ()->switch1.isTriggered() || switch2.isTriggered();
+    public static Switch or(Switch switch1, Switch switch2) {
+        Objects.requireNonNull(switch1, "The first switch may not be null");
+        Objects.requireNonNull(switch2, "The second switch may not be null");
+        if (switch1 == switch2) return switch1;
+        return () -> switch1.isTriggered() || switch2.isTriggered();
+    }
+
+    /**
+     * Return a new switch that is only triggered when <em>all</em> switches are triggered.
+     *
+     * @param swtches the switches, may not be null
+     * @return a Switch that is triggered if all of the passed switches are triggered
+     */
+    public static Switch all(Switch... swtches) {
+        Objects.requireNonNull(swtches, "The switches may not be null");
+        return () -> {
+            boolean triggered = true;
+            for (Switch swtch : swtches) {
+                triggered = triggered && swtch.isTriggered();
+            }
+            return triggered;
+        };
+    }
+
+    /**
+     * Return a new switch that is only triggered when <em>any</em> switch is triggered.
+     *
+     * @param swtches the switches, may not be null
+     * @return a Switch that is triggered if any of the passed switches are triggered, never null
+     */
+    public static Switch any(Switch... swtches) {
+        Objects.requireNonNull(swtches, "The switches may not be null");
+        return () -> {
+            for (Switch swtch : swtches) {
+                if (swtch.isTriggered()) return true;
+            }
+            return false;
+        };
     }
 }
